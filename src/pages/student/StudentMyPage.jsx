@@ -1,6 +1,6 @@
 import styles from "./StudentMyPage.module.css";
 
-import Header from "../../components/common/Header";
+import Header from "../../common/components/Header";
 import ProfileSection from "../../features/myPage/components/ProfileSection";
 import CoursesSection from "../../features/myPage/components/CoursesSection";
 
