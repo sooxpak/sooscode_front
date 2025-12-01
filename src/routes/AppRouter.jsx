@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ROUTES } from "../constants/routes";
+import authService from "@/features/auth/services/authService";
 
 // pages
 
@@ -30,11 +31,10 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
           {/* login & register */}
-          <Route element={<AuthLayout/>}>
+          <Route element={<AuthLayout setIsLogin={setIsLogin}/>}>
               <Route path="/login" element={<AuthPage setIsLogin={setIsLogin} mode="login"/>}/>
               <Route path="/register" element={<AuthPage mode="register"/>}/>
           </Route>
-
           {/* Student */}
         <Route path={ROUTES.STUDENT.MYPAGE} element={<StudentMyPage />} />
         <Route path={ROUTES.STUDENT.ONLINECLASS()} element={<StudentClassOnline />} />
@@ -46,7 +46,6 @@ export default function AppRouter() {
         <Route path={ROUTES.TEACHER.ONLINECLASS()} element={<TeacherClassOnline />} />
         <Route path={ROUTES.TEACHER.OFFLINECLASS()} element={<TeacherClassOffline />} />
         <Route path={ROUTES.TEACHER.CLASS_DETAIL()} element={<TeacherClassDetail />} />
-
       </Routes>
     </BrowserRouter>
   );
