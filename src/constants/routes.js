@@ -1,6 +1,8 @@
 export const ROUTES = {
   LOGIN: "/login",
 
+  JOIN : "/join",
+
   STUDENT: {
     MYPAGE: "/student/mypage",
     CLASS: (id = ":id") => `/student/class/${id}`,

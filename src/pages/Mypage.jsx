@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import authApi from "@/features/auth/services/authApi";
+import authService from "@/features/auth/services/authService";
 
 function MyPage() {
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
-        authApi
+        authService
             .get("/api/user/profile")
             .then((res) => setProfile(res.data))
             .catch(() => alert("프로필을 불러오지 못했습니다."));
