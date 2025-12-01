@@ -45,7 +45,7 @@ const RegisterForm = () => {
                 </div>
 
                 <div>
-                    <label className={styles.label}>이메일2</label>
+                    <label className={styles.label}>이메일</label>
                     <div className={styles.inputWrapper}>
                         <FiMail className={styles.inputIcon}/>
                         <div className={styles.row}>
