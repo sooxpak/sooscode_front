@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/images/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import LoginForm from "./features/auth/components/LoginForm";
+import MyPage from "./pages/MyPage";
+import SocialSuccess from "./pages/SocialSuccess";
+import SignupForm from "./features/auth/components/SignupForm";
+import  "./assets/global.css";
+import authApi from "@/features/auth/services/authApi.js";
+
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [isLogin, setIsLogin] = useState(false);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        setIsLogin(!!token);
+    }, []);
+
+    const onLogout = async () => {
+        try {
+            await authApi.post("/api/auth/logout");
+        } catch (e) {
+            console.log("로그아웃 API 실패");
+        }
+
+        localStorage.removeItem("accessToken");
+        setIsLogin(false);
+        navigate("/");
+    };
+
+    return (
+        <BrowserRouter>
+            {isLogin ? (
+                <button variant="outlined" color="error" onClick={onLogout}>
+                    로그아웃
+                </button>
+            ) : (
+                <Link to="/login">
+                    <button variant="contained">로그인</button>
+                </Link>
+            )}
+            <Routes>
+                <Route path="/login" element={<LoginForm setIsLogin={setIsLogin} />} />
+                <Route path="/join" element={<SignupForm setIsLogin={setIsLogin} />} />
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/social-success" element={<SocialSuccess />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
-
-export default App
+export default App;
