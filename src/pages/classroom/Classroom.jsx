@@ -18,6 +18,7 @@ const Classroom = ({/*classId*/}) => {
         fetchClassroom(classId);
     }, [classId]);
 
+
     useEffect(() => {
         if (socket.connected) {
             console.log('[Classroom] 웹소켓 연결 완료, classId:', classId);
