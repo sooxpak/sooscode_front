@@ -9,8 +9,8 @@ import Register from '@/pages/auth/Register';
 
 // Private Pages
 import Home from '@/pages/Home';
-import StudentClassroom from '@/pages/classroom/StudentClassroom';
-import InstructorClassroom from '@/pages/classroom/InstructorClassroom';
+// import StudentClassroom from '@/pages/classroom/StudentClassroom';
+import Classroom from '@/pages/classroom/Classroom.jsx';
 
 // Error Pages
 import Forbidden from '@/pages/error/Forbidden';
@@ -22,7 +22,12 @@ import ErrorPage from '@/pages/error/ErrorPage';
 import ToastTest from '@/pages/test/ToastTest';
 import LoadingTest from '@/pages/test/LoadingTest';
 import ColorPalette from '@/pages/test/ColorPalette';
+
+// 윤서 테스트
 import ChatPanel from "@/features/chat/ChatPanel.jsx";
+// 수빈 테스트
+import LogoutButton from "@/features/auth/components/base/LogoutButton.jsx";
+
 
 export default function AppRoute() {
     return (
@@ -32,7 +37,11 @@ export default function AppRoute() {
                 <Route path="/toast" element={<ToastTest />} />
                 <Route path="/loading" element={<LoadingTest />} />
                 <Route path="/color" element={<ColorPalette />} />
+                  
                 <Route path={"/chat"} element={<ChatPanel/>}/>
+
+                <Route path="/logout" element={<LogoutButton />} />
+
 
                 {/* Public - 비로그인 전용 */}
                 <Route element={<PublicRoute />}>
@@ -47,12 +56,12 @@ export default function AppRoute() {
 
                 {/* Private - 학생 전용 */}
                 {/*<Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>*/}
-                    <Route path="/class/student" element={<StudentClassroom />} />
+                {/*    <Route path="/class/student" element={<StudentClassroom />} />*/}
                 {/*</Route>*/}
 
                 {/* Private - 강사 전용 */}
                 {/*<Route element={<PrivateRoute allowedRoles={['INSTRUCTOR']} />}>*/}
-                    <Route path="/class/instructor" element={<InstructorClassroom />} />
+                    <Route path="/class" element={<Classroom />} />
                 {/*</Route>*/}
 
                 {/* Private - 관리자 전용 */}

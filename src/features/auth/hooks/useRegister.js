@@ -1,110 +1,146 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { api } from '@/services/api';
-import { useToast } from '@/hooks/useToast';
-import { isEmpty, isEmail, isPassword, isLength } from '@/utils/validation';
+// src/features/auth/hooks/useRegister.js
+import { useState } from "react";
+import { api } from "../../../services/api";
+import useTimer from "./useTimer";
+import { useNavigate } from "react-router-dom";
 
-const useRegister = () => {
-    const [form, setForm] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-    });
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [passwordStrength, setPasswordStrength] = useState('');
-
+export default function useRegister() {
     const navigate = useNavigate();
-    /* 공용 훅 사용중 */
-    const toast = useToast();
+    const { time, start, clear, format } = useTimer();
 
-    const checkPasswordStrength = (password) => {
-        if (!password) return '';
-        if (password.length < 6) return '약함';
-        if (password.length < 10) return '보통';
-        return '강함';
-    };
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
 
+    const [errors, setErrors] = useState({});
+    const [verified, setVerified] = useState(false);
+    const [showCodeInput, setShowCodeInput] = useState(false);
+    const [code, setCode] = useState("");
+    const [loadingSend, setLoadingSend] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState("");
+
+    // 값 변경
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setForm((prev) => ({ ...prev, [name]: value }));
-
-        // 해당 필드 에러 제거
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: null }));
-        }
-
-        // 비밀번호 강도 체크
-        if (name === 'password') {
-            setPasswordStrength(checkPasswordStrength(value));
-        }
+        if (name === "password") checkPasswordStrength(value);
     };
 
+    // 비밀번호 강도 계산
+    const checkPasswordStrength = (pw) => {
+        let score = 0;
+        if (pw.length >= 8) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[0-9]/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+        if (score <= 1) setPasswordStrength("약함");
+        else if (score === 2) setPasswordStrength("보통");
+        else setPasswordStrength("강함");
+    };
+
+    // 유효성 검사
     const validate = () => {
-        const newErrors = {};
+        const newErr = {};
 
-        if (isEmpty(form.name)) {
-            newErrors.name = '이름을 입력해주세요.';
-        } else if (!isLength(form.name, 2, 20)) {
-            newErrors.name = '이름은 2~20자여야 합니다.';
-        }
+        if (form.name.length < 2 || form.name.length > 20)
+            newErr.name = "이름은 2~20자";
+        if (form.email.length < 5)
+            newErr.email = "이메일은 5자 이상";
+        else if (!/\S+@\S+\.\S+/.test(form.email))
+            newErr.email = "이메일 형식 오류";
 
-        if (isEmpty(form.email)) {
-            newErrors.email = '이메일을 입력해주세요.';
-        } else if (!isEmail(form.email)) {
-            newErrors.email = '올바른 이메일 형식이 아닙니다.';
-        }
+        if (form.password.length < 8 || form.password.length > 20)
+            newErr.password = "비밀번호 8~20자";
+        if (form.password !== form.confirmPassword)
+            newErr.confirmPassword = "비밀번호 불일치";
 
-        if (isEmpty(form.password)) {
-            newErrors.password = '비밀번호를 입력해주세요.';
-        } else if (!isPassword(form.password)) {
-            newErrors.password = '비밀번호는 8~16자, 영문+숫자 필수입니다.';
-        }
+        if (!verified) newErr.emailVerify = "이메일 인증 필요";
 
-        if (isEmpty(form.confirmPassword)) {
-            newErrors.confirmPassword = '비밀번호 확인을 입력해주세요.';
-        } else if (form.password !== form.confirmPassword) {
-            newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
+        setErrors(newErr);
+        return Object.keys(newErr).length === 0;
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!validate()) return;
-
-        setLoading(true);
+    // 인증 코드 전송
+    const sendCode = async () => {
+        if (!form.email) return alert("이메일 입력 필요");
 
         try {
-            await api.post('/api/auth/register', {
-                name: form.name,
+            setLoadingSend(true);
+
+            await api.post("/api/auth/email/send", {
                 email: form.email,
-                password: form.password,
             });
 
-            toast.success('회원가입이 완료되었습니다.');
-            navigate('/login');
-        } catch (err) {
-            const errorMessage = err.response?.data?.message || '회원가입에 실패했습니다.';
-            setErrors({ form: errorMessage });
-            toast.error(errorMessage);
+            alert("인증코드 전송 완료!");
+            setShowCodeInput(true);
+            start(180); // 3분 타이머
+
+        } catch (_) {
+            alert("전송 실패");
         } finally {
-            setLoading(false);
+            setLoadingSend(false);
+        }
+    };
+
+    // 인증 코드 검증
+    const verifyCode = async () => {
+        try {
+            const { data } = await api.post("/api/auth/email/verify", {
+                email: form.email,
+                code,
+            });
+
+            if (data.verified) {
+                alert("인증 성공!");
+                setVerified(true);
+                clear();
+            } else {
+                alert("잘못된 코드");
+            }
+        } catch {
+            alert("인증 오류");
+        }
+    };
+
+    // 회원가입
+    const submit = async (e) => {
+        e.preventDefault();
+        if (!validate()) return;
+
+        try {
+            await api.post("/api/auth/register", {
+                email: form.email,
+                password: form.password,
+                name: form.name,
+            });
+
+            alert("회원가입 성공!");
+            navigate("/login");
+
+        } catch {
+            alert("회원가입 실패");
         }
     };
 
     return {
         form,
         errors,
-        loading,
+        verified,
+        showCodeInput,
+        code,
+        loadingSend,
         passwordStrength,
+        time,
+        format,
         handleChange,
-        handleSubmit,
+        setCode,
+        sendCode,
+        verifyCode,
+        submit,
     };
-};
-
-export default useRegister;
+}
