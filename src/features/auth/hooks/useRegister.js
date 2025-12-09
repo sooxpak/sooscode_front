@@ -1,10 +1,9 @@
-// src/features/auth/hooks/useRegister.js
 import {useEffect, useState} from "react";
-import { api } from "../../../services/api";
+import { api } from "@/services/api";
 import useTimer from "./useTimer";
 import { useNavigate } from "react-router-dom";
 
-export default function useRegister() {
+const useRegister = () => {
     const navigate = useNavigate();
     const { time, start, clear, format } = useTimer();
 
@@ -170,3 +169,5 @@ export default function useRegister() {
         submit,
     };
 }
+
+export default useRegister

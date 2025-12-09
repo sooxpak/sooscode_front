@@ -1,6 +1,6 @@
 import {useEffect, useState, useRef} from "react";
 
-export default function useTimer() {
+const useTimer = () => {
     const [time, setTime] = useState(0);
     const intervalRef = useRef(null);
 
@@ -38,3 +38,5 @@ export default function useTimer() {
 
     return { time, start, clear, format };
 }
+
+export default useTimer

@@ -20,6 +20,7 @@
    페이지 단위 (변경 없음)
    ============================================ */
 .page {
+    width: 50%;
     height: calc(100vh - 60px);
     scroll-snap-align: start;
     display: flex;

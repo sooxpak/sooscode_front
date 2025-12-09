@@ -3,7 +3,7 @@ import {FiMail, FiLock, FiUser} from "react-icons/fi";
 import styles from "./AuthForm.module.css";
 import useRegister from "../hooks/useRegister";
 
-export default function RegisterForm() {
+const RegisterForm = () => {
     const {
         form,
         errors,
@@ -168,3 +168,5 @@ export default function RegisterForm() {
         </div>
     );
 }
+
+export default RegisterForm

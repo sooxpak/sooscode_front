@@ -20,7 +20,6 @@ const LoginForm = () => {
 
     return (
         <>
-
             <h2 className={styles.title}>로그인</h2>
             <p className={styles.subtitle}>SOO'S CODE에 오신 것을 환영합니다.</p>
 

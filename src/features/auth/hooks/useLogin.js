@@ -1,9 +1,8 @@
-// src/features/auth/hooks/useLogin.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../../services/api";
-import { useUser } from "../../../hooks/useUser";
-import { useToast } from "../../../hooks/useToast";
+import { api } from "@/services/api";
+import { useUser } from "@/hooks/useUser";
+import { useToast } from "@/hooks/useToast";
 
 const useLogin = () => {
     const { setUser } = useUser();

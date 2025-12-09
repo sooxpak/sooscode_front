@@ -1,6 +1,8 @@
 // features/classroom/layouts/ClassBody.jsx
 import { useState } from 'react';
 import styles from './ClassBody.module.css';
+import CodeSharePanel from "@/features/classroom/components/SnapshotPanel.jsx";
+import CodePanel from "@/features/classroom/components/CodePanel.jsx";
 import { useSidebar } from "@/features/classroom/hooks/useSidebar.js";
 
 const ClassBody = ({ isInstructor = false }) => {
@@ -27,8 +29,7 @@ const ClassBody = ({ isInstructor = false }) => {
                 <div className={styles.content}>
                     {/* 내 코드 */}
                     <div className={styles.inner}>
-                        코드
-                        {/*<CodePanel />*/}
+                        <CodePanel />
                     </div>
 
                     {/* 스냅샷 / 코드쉐어 탭 */}
@@ -58,7 +59,7 @@ const ClassBody = ({ isInstructor = false }) => {
                             {activeTab === 'code' && (
                                 <div className={styles.panel}>
                                     코드 쉐어 패널
-                                    {/*<CodeSharePanel />*/}
+                                    <CodeSharePanel />
                                 </div>
                             )}
                         </div>
