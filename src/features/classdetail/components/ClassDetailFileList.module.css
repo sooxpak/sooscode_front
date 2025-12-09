@@ -1,0 +1,46 @@
+.container {
+  background: #242428;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 480px;
+  min-height: 800px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+/* 파일 리스트 – 콘텐츠는 위에 붙는다 */
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 파일 등록 버튼 – 아래로 강제 이동 */
+.uploadButton {
+  margin-top: auto;   /* 이거 하나면 아래 고정 */
+  width: 100%;
+  padding: 12px;
+  background: #6f7dfb;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.uploadButton:hover {
+  background: #5b6af0;
+}

@@ -23,6 +23,10 @@ import ToastTest from '@/pages/test/ToastTest';
 import LoadingTest from '@/pages/test/LoadingTest';
 import ColorPalette from '@/pages/test/ColorPalette';
 
+import Mypage from '@/pages/mypage/Mypage.jsx'
+import StudentClassDetail from '@/pages/classdetail/StudentClassDetail.jsx'
+import InstructorClassDetail from '@/pages/classdetail/InstructorClassDetail.jsx'
+
 // 윤서 테스트
 import ChatPanel from "@/features/chat/ChatPanel.jsx";
 // 수빈 테스트
@@ -68,6 +72,12 @@ export default function AppRoute() {
                 {/*<Route element={<PrivateRoute allowedRoles={['admin']} />}>*/}
                 {/*    <Route path="/admin" element={<AdminDashboard />} />*/}
                 {/*</Route>*/}
+
+                {/* mypage 및 classdetail*/}
+                <Route path="/mypage" element={<Mypage />} />
+                <Route path="/classdetail/student" element={<StudentClassDetail />} />
+                <Route path="/classdetail/instructor" element={<InstructorClassDetail />} />
+
 
                 {/* Error Pages */}
                 <Route path="/error/403" element={<Forbidden />} />

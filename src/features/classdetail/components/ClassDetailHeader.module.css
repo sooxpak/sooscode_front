@@ -1,0 +1,42 @@
+.header {
+  width: 100%;
+  background: #2d2d31;
+  padding: 14px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+}
+
+/* 왼쪽 경로 텍스트 */
+.path {
+  color: #7da2f8;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* 제목 */
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #dddddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 500px) {
+  .title {
+    font-size: 14px;
+    white-space: normal; /* 모바일은 말줄임 대신 자동 줄바꿈 */
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

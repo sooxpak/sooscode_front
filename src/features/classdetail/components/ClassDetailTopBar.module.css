@@ -1,0 +1,92 @@
+.wrapper {
+  width: 100%;
+  background: #2b2c2f;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ───────── Left Zone ───────── */
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconBox {
+  width: 44px;
+  height: 44px;
+  background: #5667ff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 22px;
+  color: white;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #bbbbbb;
+}
+
+/* ───────── Center Zone (Tabs) ───────── */
+.center {
+  display: flex;
+  gap: 20px;
+}
+
+.tab {
+  font-size: 15px;
+  color: #a7a7a7;
+  padding-bottom: 6px;
+  cursor: pointer;
+}
+
+.active {
+  color: #6f80ff;
+  border-bottom: 2px solid #6f80ff;
+}
+
+/* ───────── Right Zone ───────── */
+.right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+}
+
+.time {
+  color: #d1d1d1;
+  font-size: 13px;
+
+  padding: 4px 10px;
+  background: #1f1f1f;
+  border-radius: 6px;
+}
+
+.enterBtn {
+  padding: 8px 16px;
+  background: #39c76a;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+
+.enterBtn:hover {
+  background: #2fb15c;
+}

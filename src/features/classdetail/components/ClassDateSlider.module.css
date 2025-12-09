@@ -1,0 +1,86 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.arrow {
+  background: #333;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.list {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.item {
+  width:100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: #2f2f33;
+  cursor: pointer;
+  text-align: center;
+}
+
+.active {
+  background: #6f7dfb;
+}
+
+.pickButton {
+  margin-top:10px;
+  width:240px;
+  height:50px;
+  background: #555;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pickerWrapper {
+  position: absolute;
+  background: #1f1f22;
+  padding: 12px;
+  border-radius: 10px;
+  z-index: 999;
+  right: 10px;
+  top: 60px;
+}
+
+.closeBtn {
+  margin-top: 8px;
+  width: 100%;
+  background: #444;
+  border: none;
+  padding: 6px;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+}
+
+.topArea {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* 버튼 가운데 */
+  position: relative;       /* pickerWrapper 기준 */
+  margin-bottom: 10px;      /* 슬라이더와 간격 */
+}
+
+/* 나머지는 네가 준 CSS 그대로 사용: 절대 수정 X */

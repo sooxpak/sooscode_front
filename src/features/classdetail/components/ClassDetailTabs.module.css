@@ -1,0 +1,38 @@
+.tabContainer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 0 10px;
+  border-bottom: 1px solid #333;
+  background-color:#2b2c2f;
+}
+
+.tab {
+  font-size: 15px;
+  color: #bdbdbd;
+  padding: 14px 0;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+}
+
+.tab:hover {
+  color: #8fa9ff;
+}
+
+/* 활성 탭 */
+.active {
+  color: #7b93ff;
+  font-weight: 600;
+}
+
+.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #7b93ff;
+  border-radius: 4px;
+}
