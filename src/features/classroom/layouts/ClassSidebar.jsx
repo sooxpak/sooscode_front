@@ -1,6 +1,7 @@
 import styles from './ClassSidebar.module.css';
 import { useState } from "react";
 import {useSidebar} from "@/features/classroom/hooks/useSidebar.js";
+import ChatPanel from "@/features/chat/ChatPanel.jsx";
 
 const ClassSidebar = () => {
     const { collapsed } = useSidebar();
@@ -49,7 +50,7 @@ const ClassSidebar = () => {
                         )}
                         {activeTab === 'chat' && (
                             <div className={styles.chatArea}>
-                                <p>채팅 내용이 여기 표시됩니다</p>
+                                <ChatPanel/>
                             </div>
                         )}
                         {activeTab === 'files' && (

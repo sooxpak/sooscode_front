@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import styles from './ClassBody.module.css';
 import { useSidebar } from "@/features/classroom/hooks/useSidebar.js";
+import SnapshotPanel from "@/features/snapshot/components/SnapshotPanel.jsx";
 
 const ClassBody = ({ isInstructor = false }) => {
     const { collapsed } = useSidebar();
@@ -51,8 +52,7 @@ const ClassBody = ({ isInstructor = false }) => {
                         <div className={styles.tabContent}>
                             {activeTab === 'snapshot' && (
                                 <div className={styles.panel}>
-                                    스냅샷 패널
-                                    {/*<SnapshotPanel />*/}
+                                    {<SnapshotPanel/>}
                                 </div>
                             )}
                             {activeTab === 'code' && (

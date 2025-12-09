@@ -1,69 +1,78 @@
-// 위에서 정의한 CSS 모듈을 가져와 스타일을 적용합니다.
-import styles from './SnapshotPanel.module.css';
+import { useState } from "react";
+import styles from "../styles/SnapshotPanel.module.css";
+import { useSnapshot } from "@/features/snapshot/hooks/useSnapshot";
+import SnapshotModal from "./SnapshotModal";
+import { useToast } from "@/hooks/useToast";
 
-/**
- * 스냅샷 목록을 보여주는 패널 UI 컴포넌트입니다.
- *
- * @param {Array} props.snapshots - 렌더링할 스냅샷 데이터 목록
- * @param {number|null} props.selectedId - 현재 선택된 스냅샷의 식별 번호
- * @param {Function} props.onSelect - 아이템 클릭 시 실행될 부모 함수
- * @param {Function} props.onRestore - 복원 버튼 클릭 시 실행될 부모 함수
- * @param {boolean} props.showRestoreButton - 복원 버튼 표시 여부
- */
-const SnapshotPanel = ({
-                           snapshots,
-                           selectedId,
-                           onSelect,
-                           onRestore,
-                           showRestoreButton
-                       }) => {
+// [Props 설명]
+// currentCode: 현재 에디터에 적힌 코드 (저장할 때 사용)
+// onRestore: 리스트에서 '불러오기' 눌렀을 때 실행할 함수 (부모의 코드를 바꿈)
+export default function SnapshotPanel({ currentCode, onRestore }) {
 
-    // 데이터가 없을 경우 안내 문구를 표시합니다.
-    if (!snapshots || snapshots.length === 0) {
-        return <div className={styles.container}>저장된 스냅샷이 없습니다.</div>;
-    }
+    // 훅 기능 사용 (목록 조회, 저장 함수, 로딩 상태)
+    const { snapshots, createSnapshot, isLoading } = useSnapshot();
+    const toast = useToast();
+
+    // 모달 상태 (패널 내부에서 관리)
+    const [isModalOpen, setModalOpen] = useState(false);
+
+    // [버튼 클릭] 저장하기
+    const handleSaveClick = () => {
+        if (!currentCode || !currentCode.trim()) {
+            toast.warning("저장할 코드가 없습니다.");
+            return;
+        }
+        setModalOpen(true);
+    };
+
+    // [모달] 저장 확정
+    const handleModalConfirm = async (title) => {
+        const success = await createSnapshot(title, currentCode);
+        if (success) {
+            setModalOpen(false);
+        }
+    };
+
     return (
         <div className={styles.container}>
-            {snapshots.map((snapshot) => {
-                // 기본 아이템 스타일 클래스를 변수에 할당합니다.
-                let itemClass = styles.item;
+            {/* 1. 상단: 저장 버튼 */}
+            <div className={styles.header}>
+                <button
+                    className={styles.saveButton}
+                    onClick={handleSaveClick}
+                    disabled={isLoading}
+                >
+                    {isLoading ? "저장 중..." : "+ 현재 코드 스냅샷 저장"}
+                </button>
+            </div>
 
-                // 현재 아이템이 선택된 상태라면 active 클래스를 추가합니다.
-                if (selectedId === snapshot.id) {
-                    itemClass = `${styles.item} ${styles.active}`;
-                }
-
-                return (
-                    <div
-                        key={snapshot.id}
-                        className={itemClass}
-                        onClick={() => onSelect(snapshot)}
-                    >
-                        <span className={styles.name}>
-                            {snapshot.name}
-                        </span>
-                        <span className={styles.time}>
-                            {snapshot.createdAt}
-                        </span>
-
-                        {/* showRestoreButton이 true일 때만 복원 버튼을 렌더링합니다. */}
-                        {showRestoreButton && (
-                            <button
-                                className={styles.restoreButton}
-                                onClick={(e) => {
-                                    // 상위 요소로의 클릭 이벤트 전파를 중단합니다.
-                                    e.stopPropagation();
-                                    onRestore(snapshot);
-                                }}
-                            >
-                                복원
-                            </button>
-                        )}
+            {/* 2. 하단: 스냅샷 리스트 */}
+            {(!snapshots || snapshots.length === 0) ? (
+                <div className={styles.empty}>저장된 스냅샷이 없습니다.</div>
+            ) : (
+                snapshots.map((snapshot) => (
+                    <div key={snapshot.id} className={styles.item}>
+                        <div className={styles.info}>
+                            <span className={styles.name}>{snapshot.name}</span>
+                            <span className={styles.time}>{snapshot.createdAt}</span>
+                        </div>
+                        <button
+                            className={styles.restoreButton}
+                            onClick={() => onRestore(snapshot)}
+                        >
+                            불러오기
+                        </button>
                     </div>
-                );
-            })}
+                ))
+            )}
+
+            {/* 3. 모달 (패널 내장) */}
+            <SnapshotModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onConfirm={handleModalConfirm}
+                isLoading={isLoading}
+            />
         </div>
     );
-};
-
-export default SnapshotPanel;
+}
