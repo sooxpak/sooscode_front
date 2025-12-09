@@ -41,9 +41,6 @@ export default function AppRoute() {
                 <Route path="/toast" element={<ToastTest />} />
                 <Route path="/loading" element={<LoadingTest />} />
                 <Route path="/color" element={<ColorPalette />} />
-                  
-                <Route path={"/chat"} element={<ChatPanel/>}/>
-
                 <Route path="/logout" element={<LogoutButton />} />
 
 

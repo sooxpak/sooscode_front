@@ -46,15 +46,22 @@
     gap: 4px;
 }
 
-/* ✅ 내 채팅 */
+/* ✅ 내 채팅 오른쪽으로 완전히 보내기 */
 .chat-bubble.mine {
     align-items: flex-end;
+    margin-left: auto;   /* ✅ 오른쪽 정렬 핵심 */
 }
 
+/* ✅ 내 채팅 말풍선: 검정색 */
 .chat-bubble.mine .chat-content {
-    background: var(--color-primary-500);
-    color: white;
+    background: #111;   /* ✅ 완전 검정 */
+    color: #fff;
     border-radius: 14px 14px 0 14px;
+}
+
+/* ✅ 내 채팅 공감 영역도 오른쪽 정렬 */
+.chat-bubble.mine .chat-actions {
+    justify-content: flex-end;
 }
 
 /* ✅ 상대 채팅 */
@@ -161,4 +168,10 @@
 .chat-sidebar__messages::-webkit-scrollbar-thumb {
     background: var(--color-border-medium);
     border-radius: 10px;
+}
+.chat-date-divider {
+    text-align: center;
+    margin: 12px 0;
+    font-size: 12px;
+    color: #888;
 }
