@@ -10,7 +10,7 @@ import Register from '@/pages/auth/Register';
 // Private Pages
 import Home from '@/pages/Home';
 // import StudentClassroom from '@/pages/classroom/StudentClassroom';
-import InstructorClassroom from '@/pages/classroom/InstructorClassroom';
+import Classroom from '@/pages/classroom/Classroom.jsx';
 
 // Error Pages
 import Forbidden from '@/pages/error/Forbidden';
@@ -50,7 +50,7 @@ export default function AppRoute() {
 
                 {/* Private - 강사 전용 */}
                 {/*<Route element={<PrivateRoute allowedRoles={['INSTRUCTOR']} />}>*/}
-                    <Route path="/class/instructor" element={<InstructorClassroom />} />
+                    <Route path="/class" element={<Classroom />} />
                 {/*</Route>*/}
 
                 {/* Private - 관리자 전용 */}

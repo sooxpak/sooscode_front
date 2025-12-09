@@ -1,8 +1,8 @@
-import styles from './ClassroomSidebar.module.css';
+import styles from './ClassSidebar.module.css';
 import { useState } from "react";
 import {useSidebar} from "@/features/classroom/hooks/useSidebar.js";
 
-const ClassroomSidebar = () => {
+const ClassSidebar = () => {
     const { collapsed } = useSidebar();
     const [activeTab, setActiveTab] = useState('students');
 
@@ -28,6 +28,7 @@ const ClassroomSidebar = () => {
                             onClick={() => setActiveTab('chat')}
                         >
                             채팅
+                            {/*<ChatPanel />*/}
                         </button>
                         <button
                             className={`${styles.tabButton} ${activeTab === 'files' ? styles.active : ''}`}
@@ -63,4 +64,4 @@ const ClassroomSidebar = () => {
     );
 };
 
-export default ClassroomSidebar;
+export default ClassSidebar;
