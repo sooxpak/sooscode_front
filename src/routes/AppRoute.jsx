@@ -49,12 +49,11 @@ export default function AppRoute() {
                 <Route path="/logout" element={<LogoutButton />} />
 
                 <Route path="/admin" element={<AdminPage />} />
-
+                
                 <Route path="/mypage" element={<Mypage />} />
                 <Route path="/classdetail/student" element={<StudentClassDetail />} />
                 <Route path="/classdetail/instructor" element={<InstructorClassDetail />} />
                 <Route path="/codepractice" element={<CodePracticePage />} />
-
 
                 {/* Public - 비로그인 전용 */}
                 <Route element={<PublicRoute />}>
@@ -63,9 +62,9 @@ export default function AppRoute() {
                 </Route>
 
                 {/* Private - 로그인 필수 (공용) */}
-                <Route element={<PrivateRoute />}>
-                    <Route path="/" element={<Home />} />
-                </Route>
+                {/*<Route element={<PrivateRoute />}>*/}
+
+                {/*</Route>*/}
 
                 {/* Private - 학생 전용 */}
                 {/*<Route element={<PrivateRoute allowedRoles={['STUDENT']} />}>*/}
@@ -81,12 +80,6 @@ export default function AppRoute() {
                 {/*<Route element={<PrivateRoute allowedRoles={['admin']} />}>*/}
                 {/*    <Route path="/admin" element={<AdminDashboard />} />*/}
                 {/*</Route>*/}
-
-                {/* Error Pages */}
-                <Route path="/error/403" element={<Forbidden />} />
-                <Route path="/error/404" element={<NotFound />} />
-                <Route path="/error/500" element={<ServerError />} />
-                <Route path="/error" element={<ErrorPage />} />
 
                 {/* 404 - 매칭 안 되는 모든 경로 */}
                 <Route path="*" element={<NotFound />} />
