@@ -4,7 +4,7 @@ import {useCode} from "@/features/code/hooks/useCode.js";
 import {useToast} from "@/hooks/useToast.js";
 import {useCallback, useEffect} from "react";
 import {snapshotService} from "@/features/snapshot/service/snapshotService.js";
-// import { useError } from "@/hooks/useError";
+import { useError } from "@/hooks/useError";
 
 // push 할때 임시 useCode 삭제하고 푸시하는데 올릴때 안터지는용도로
 // const useCode =() => ({
@@ -26,7 +26,7 @@ export const useSnapshot = () => {
     const classId = Number(paramClassId);
 
     const { code, setCode } = useCode();
-    // const { handleError } = useError();
+    const { handleError } = useError();
     const toast = useToast();
 
     const snapshots = snapshotStore((state) => state.snapshots);
@@ -41,9 +41,9 @@ export const useSnapshot = () => {
             setSnapshots(response.content || []);
         }catch (error){
             console.error(error);
-            // handleError(error);
+            handleError(error);
         }
-     }, [classId, setSnapshots]);//, handleError
+     }, [classId, setSnapshots, handleError]);
 
     useEffect(() => {
         fetchSnapshots();
@@ -76,7 +76,7 @@ export const useSnapshot = () => {
             }catch (error){
                 console.error(error);
                 if (error.response){
-                    // handleError(error);
+                    handleError(error);
                 }else {
                     toast.error('스냅샷 저장에 실패하였습니다')
                 }
