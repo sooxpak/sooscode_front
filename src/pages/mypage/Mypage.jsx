@@ -11,14 +11,16 @@ import { Navigate, useNavigate } from "react-router-dom";
 export default function Mypage() {
 
   const { user} = useUser();
-  const { data, isLoading, error } = useMyClasses(0, 10);
-  const Navigate = useNavigate();
+  const { data, isLoading, error } = useMyClasses();
+  const navigate = useNavigate();
+  console.log("Mypage API response:", data);
 
   if (isLoading) return <div>로딩중...</div>;
   if (error) return <div>데이터 로딩 실패</div>;
   if (!user) return <div>Loading...</div>;
 
   console.log(data.content);
+  console.log(data);
   console.log(user);
 
   return (
@@ -32,28 +34,22 @@ export default function Mypage() {
 
     <div className={styles.wrapper}>
         <div className={styles.gridContainer}>
-            {data.content.map((item) => (
+            {data.map((item) => (
               <LectureCard
                 key={item.classId}
                 title={item.title}
                 teacher={item.teacherName}
                 imageUrl={item.thumbnailUrl ?? defaultImg}
-                onClick={() =>{
-                  if(user.role === "STUDENT"){
-                    Navigate(`/classdetail/student?classId=${item.classId}`);
-                  } else{
-                    Navigate(`/classdetail/instructor?classId=${item.classId}`);
+                onClick={() => {
+                  if (user.role === "STUDENT") {
+                    navigate(`/classdetail/student?classId=${item.classId}`);
+                  } else {
+                    navigate(`/classdetail/instructor?classId=${item.classId}`);
                   }
-
-                }
-                  //  Navigate(`/classdetail/instructor?classId=${item.classId}`)
-                  
-                  
-                  }
+                }}
               />
             ))}
         </div>
-
     </div>
 </div>
   );

@@ -29,10 +29,12 @@ export default function StudentClassDetail() {
 
   // user 객체 데이터 get
   const { user } = useUser();
-  const { data: myClasses } = useMyClasses(0, 10);
+  const { data: myClasses } = useMyClasses();
   const { data: snapshots } = useSnapshots(classId, 0, 3);
   const { data: classInfo } = useClassInfo(classId);
   const Lecutretitle = classInfo?.title ?? "";
+
+  console.log(myClasses)
 
   if (!user) return <div>Loading...</div>;
 
@@ -51,7 +53,7 @@ export default function StudentClassDetail() {
         </div>
 
         <div className={styles.lectureSection}>
-          {myClasses?.content?.map(item => (
+          {myClasses?.map(item => (
             <LectureCard
               key={item.classId}
               title={item.title}

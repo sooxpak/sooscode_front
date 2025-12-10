@@ -33,8 +33,8 @@ import ChatPanel from "@/features/chat/ChatPanel.jsx";
 import LogoutButton from "@/features/auth/components/base/LogoutButton.jsx";
 // 현영 테스트
 import AdminPage from "@/pages/admin/AdminPage.jsx";
+import CodePracticePage from '../pages/codepractice/CodePracticePage';
 // 효상 테스트
-import CodePractice from '../pages/classdetail/CodePractice.jsx';
 
 
 
@@ -49,7 +49,11 @@ export default function AppRoute() {
                 <Route path="/logout" element={<LogoutButton />} />
 
                 <Route path="/admin" element={<AdminPage />} />
-                <Route path="/" element={<Home />} />
+                
+                <Route path="/mypage" element={<Mypage />} />
+                <Route path="/classdetail/student" element={<StudentClassDetail />} />
+                <Route path="/classdetail/instructor" element={<InstructorClassDetail />} />
+                <Route path="/codepractice" element={<CodePracticePage />} />
 
                 {/* Public - 비로그인 전용 */}
                 <Route element={<PublicRoute />}>
@@ -76,19 +80,6 @@ export default function AppRoute() {
                 {/*<Route element={<PrivateRoute allowedRoles={['admin']} />}>*/}
                 {/*    <Route path="/admin" element={<AdminDashboard />} />*/}
                 {/*</Route>*/}
-
-                {/* mypage 및 classdetail*/}
-                <Route path="/mypage" element={<Mypage />} />
-                <Route path="/classdetail/student" element={<StudentClassDetail />} />
-                <Route path="/classdetail/instructor" element={<InstructorClassDetail />} />
-                <Route path="/classdetail/codepractice" element={<CodePractice />} />
-
-
-                {/* Error Pages */}
-                <Route path="/error/403" element={<Forbidden />} />
-                <Route path="/error/404" element={<NotFound />} />
-                <Route path="/error/500" element={<ServerError />} />
-                <Route path="/error" element={<ErrorPage />} />
 
                 {/* 404 - 매칭 안 되는 모든 경로 */}
                 <Route path="*" element={<NotFound />} />

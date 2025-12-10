@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 =========================================================== */
 export const fetchClassFiles = async (classId, page = 0, size = 10) => {
   const res = await api.get(
-    `/api/classroom/${classId}/files?page=${page}&size=${size}`
+    `/api/mypage/${classId}/files?page=${page}&size=${size}`
   );
   return res.data;
 };
@@ -25,7 +25,7 @@ export const useClassFiles = (classId, page = 0, size = 10) => {
 =========================================================== */
 export const fetchFilesByDate = async (classId, lectureDate, page = 0, size = 10) => {
   const res = await api.get(
-    `/api/classroom/${classId}/files/by-date?lectureDate=${lectureDate}&page=${page}&size=${size}`
+    `/api/mypage/${classId}/files/by-date?lectureDate=${lectureDate}&page=${page}&size=${size}`
   );
   return res.data;
 };
@@ -44,7 +44,7 @@ export const useFilesByDate = (classId, lectureDate, page = 0, size = 10) => {
    - Multipart/FormData 방식
 =========================================================== */
 export const uploadFiles = async (formData) => {
-  const res = await api.post(`/api/classroom/files/upload`, formData, {
+  const res = await api.post(`/api/mypage/files/upload`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return res.data;
@@ -81,7 +81,7 @@ export const useUploadFiles = () => {
    - JSON Body : { teacherId, classId, fileIds: [] }
 =========================================================== */
 export const deleteFiles = async (body) => {
-  const res = await api.delete(`/api/classroom/files/batch`, {
+  const res = await api.delete(`/api/mypage/files/batch`, {
     data: body,
   });
   return res.data;

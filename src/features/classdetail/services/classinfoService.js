@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
  * GET /api/classroom/{classId}
  */
 export const fetchClassInfo = async (classId) => {
-  const res = await api.get(`/api/classroom/${classId}`);
+  const res = await api.get(`/api/mypage/detail/${classId}`);
   return res.data; // ResponseEntity.ok(payload)
 };
 
