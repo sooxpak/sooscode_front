@@ -16,6 +16,8 @@ const LoginForm = () => {
         loading,
         error,
         onSubmit,
+        emailRef,
+        passwordRef,
     } = useLogin();
 
     return (
@@ -24,7 +26,7 @@ const LoginForm = () => {
             <p className={styles.subtitle}>SOO'S CODE에 오신 것을 환영합니다.</p>
 
             <form className={styles.form} onSubmit={onSubmit}>
-                {error && <div className={styles.error}>{error}</div>}
+                {error && <div className={styles.errorBox}>{error}</div>}
 
                 <div>
                     <label className={styles.label}>이메일</label>
@@ -36,6 +38,7 @@ const LoginForm = () => {
                             placeholder="email@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            ref={emailRef}
                         />
                     </div>
                 </div>
@@ -50,10 +53,11 @@ const LoginForm = () => {
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            ref={passwordRef}
                         />
                     </div>
                 </div>
-
+                {/*
                 <div className={styles.checkboxWrapper}>
                     <label htmlFor="rememberMe" className={styles.checkboxLabel}>
                         <input
@@ -67,7 +71,7 @@ const LoginForm = () => {
                         자동 로그인
                     </label>
                 </div>
-
+                */}
 
                 <button type="submit" className={styles.primaryButton} disabled={loading}>
                     {loading ? "로그인 중..." : "로그인"}

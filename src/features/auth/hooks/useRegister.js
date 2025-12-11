@@ -1,7 +1,8 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { api } from "@/services/api";
 import useTimer from "./useTimer";
 import { useNavigate } from "react-router-dom";
+import {handleAuthError} from "@/features/auth/hooks/useEmail.js";
 
 const useRegister = () => {
     const navigate = useNavigate();
@@ -14,13 +15,22 @@ const useRegister = () => {
         confirmPassword: "",
     });
 
+    const [errors, setErrors] = useState({});
+    const [verified, setVerified] = useState(false);
+    const [showCodeInput, setShowCodeInput] = useState(false);
+    const [code, setCode] = useState("");
+    const [loadingSend, setLoadingSend] = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState("");
+
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+    const codeRef = useRef(null);
 
     useEffect(() => {
         const handleBeforeUnload = (e) => {
-            // 입력한 값이 하나라도 있으면 경고 실행
             if (form.name || form.email || form.password || form.confirmPassword) {
                 e.preventDefault();
-                e.returnValue = ""; // Chrome 용
+                e.returnValue = "";
             }
         };
 
@@ -32,17 +42,9 @@ const useRegister = () => {
     }, [form]);
 
 
-    const [errors, setErrors] = useState({});
-    const [verified, setVerified] = useState(false);
-    const [showCodeInput, setShowCodeInput] = useState(false);
-    const [code, setCode] = useState("");
-    const [loadingSend, setLoadingSend] = useState(false);
-    const [passwordStrength, setPasswordStrength] = useState("");
-
     // 값 변경
     const handleChange = (e) => {
         const { name, value } = e.target;
-
         setForm((prev) => ({ ...prev, [name]: value }));
         if (name === "password") checkPasswordStrength(value);
     };
@@ -95,10 +97,11 @@ const useRegister = () => {
 
             alert("인증코드 전송 완료!");
             setShowCodeInput(true);
-            start(180); // 3분 타이머
+            start(300); // 5분 타이머
 
-        } catch (_) {
-            alert("전송 실패");
+        } catch (err) {
+            const msg = handleAuthError(err.response?.data?.code, { emailRef });
+            alert(msg || "전송 실패");
         } finally {
             setLoadingSend(false);
         }
@@ -106,27 +109,26 @@ const useRegister = () => {
 
     // 인증 코드 검증
     const verifyCode = async () => {
-
         if (!code || code.length !== 6) {
             alert("인증코드는 6자리 숫자입니다.");
             return;
         }
 
         try {
-            const { data } = await api.post("/api/auth/email/verify", {
+            const data  = await api.post("/api/auth/email/verify", {
                 email: form.email,
                 code,
             });
 
             if (data.success) {
-                alert("인증 성공!");
+                alert("인증에 성공했습니다.");
                 setVerified(true);
                 clear();
             } else {
-                alert("잘못된 코드");
+                alert("잘못된 코드입니다.");
             }
         } catch {
-            alert("인증 오류");
+            alert("인증에 실패했습니다.");
         }
     };
 
@@ -137,18 +139,17 @@ const useRegister = () => {
         if (!validate()) return;
 
         try {
-            await api.post("/api/auth/register", {
-                email: form.email,
-                name: form.name,
-                password: form.password,
-                confirmPassword: form.confirmPassword
-            });
+            await api.post("/api/auth/register", form);
 
-            alert("회원가입 성공!");
+            alert("회원가입에 성공했습니다.");
             navigate("/login");
 
-        } catch {
-            alert("회원가입 실패");
+        } catch (err) {
+            const msg = handleAuthError(err.response?.data?.code, {
+                emailRef,
+                passwordRef,
+            });
+            alert(msg || "회원가입에 실패했습니다.");
         }
     };
 

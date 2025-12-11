@@ -162,11 +162,11 @@
 }
 
 .fieldError {
-     font-size: var(--font-size-xs);
-     color: var(--color-error);
-     margin-top: var(--spacing-1);
-     line-height: 1.4;
- }
+    font-size: var(--font-size-xs);
+    color: var(--color-error);
+    margin-top: var(--spacing-1);
+    line-height: 1.4;
+}
 
 /* Password Strength */
 .strong {
@@ -300,4 +300,25 @@
     font-size: var(--font-size-sm);
     color: var(--color-text-primary);
     cursor: pointer;
+}
+
+.errorBox {
+    background: rgba(255, 76, 76, 0.1);
+    border: 1px solid rgba(255, 76, 76, 0.3);
+    padding: var(--spacing-3);
+    border-radius: var(--radius-base);
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-2);
+}
+
+.inputError {
+    border-color: var(--color-error) !important;
+    box-shadow: 0 0 0 3px rgba(255, 76, 76, 0.15);
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.2);
 }
