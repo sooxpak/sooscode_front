@@ -18,6 +18,7 @@ export default function ChatPanel({ classId = 1 }) {
 
     const { user } = useUser();
 
+    const [activeMenuId, setActiveMenuId] = useState(null); // 어떤 버블의 ··· 메뉴가 열려있는지
 
     //  스크롤 할 때마다 "지금 맨 아래인지" 계산
     const handleScroll = () => {
@@ -99,7 +100,7 @@ export default function ChatPanel({ classId = 1 }) {
             const api = body.body ?? body;        // body 안쪽 ApiResponse 꺼냄
             const msg = api.data ?? api;
 
-            // 1️⃣ 공감 브로드캐스트인 경우
+            // 1️ 공감 브로드캐스트인 경우
             if (msg.chatId && typeof msg.reactionCount === "number") {
                 setMessages((prev) =>
                     prev.map((m) =>
@@ -110,8 +111,23 @@ export default function ChatPanel({ classId = 1 }) {
                 );
                 return;
             }
+            //  삭제 이벤트
+            if (msg.type === "DELETE") {
+                setMessages((prev) =>
+                    prev.map((m) =>
+                        m.chatId === msg.chatId
+                            ? {
+                                ...m,
+                                deleted: true,
+                                content: "삭제된 메시지입니다.",
+                            }
+                            : m
+                    )
+                );
+                return;
+            }
 
-            // 2️⃣ 일반 채팅 / 시스템 메시지 추가
+            // 2️ 일반 채팅 / 시스템 메시지 추가
             setMessages((prev) => [...prev, msg]);
         });
 
@@ -165,6 +181,16 @@ export default function ChatPanel({ classId = 1 }) {
         publish(`/app/chat/${classId}`, payload);
         setInputValue("");
     };
+    const handleDelete = (chatId) => {
+        if (!window.confirm("이 메시지를 삭제할까요?")) return;
+
+        publish(`/app/chat/${classId}/delete`, {
+            chatId, // ChatDeleteRequest.chatId 로 매핑됨
+        });
+
+        setActiveMenuId(null);
+    };
+
 
     //  공감 전송 (이제 UI 직접 set 안 함 — WebSocket으로만 반영)
     const sendReaction = async (chatId) => {
@@ -192,23 +218,7 @@ export default function ChatPanel({ classId = 1 }) {
         }
     };
 
-    //  날짜 + AM/PM 시간 포맷 (MM-DD AM 3:21)
-    const formatDateTime = (iso) => {
-        if (!iso) return "";
 
-        const date = new Date(iso);
-
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-
-        let hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-        const ampm = hours >= 12 ? "PM" : "AM";
-
-        hours = hours % 12 || 12; // 0 → 12
-
-        return `${month}-${day} ${ampm} ${hours}:${minutes}`;
-    };
     // YYYY-MM-DD 형태로 날짜만 뽑기 (비교용)
     const getDateKey = (iso) => {
         if (!iso) return "";
@@ -280,6 +290,8 @@ export default function ChatPanel({ classId = 1 }) {
                         const mine = msg.email === myEmail;
 
                         const created = msg.created_at || msg.createdAt || null;
+
+                        const isMenuOpen = activeMenuId === msg.chatId;
                         //  이전 메시지 날짜 가져오기
                         const prevMsg = messages[idx - 1];
                         const prevDateKey = prevMsg
@@ -327,14 +339,13 @@ export default function ChatPanel({ classId = 1 }) {
                         return (
                             <React.Fragment key={idx}>
 
+                                {dateDividerText && (
                                     <div className="chat-date-divider">
                                         {dateDividerText}
                                     </div>
+                                )}
 
-
-                                <div
-                                    className={`chat-bubble ${mine ? "mine" : "other"}`}
-                                >
+                                <div className={`chat-bubble ${mine ? "mine" : "other"}`}>
                                     {!mine && (
                                         <div className="chat-username">
                                             {msg.name}
@@ -345,6 +356,7 @@ export default function ChatPanel({ classId = 1 }) {
                                     <div className="chat-time">{formatTimeOnly(created)}</div>
 
                                     <div className="chat-actions">
+                                        {/* 공감 버튼/카운트는 기존 그대로 */}
                                         <button
                                             type="button"
                                             className="chat-react-btn"
@@ -353,8 +365,39 @@ export default function ChatPanel({ classId = 1 }) {
                                             ✅
                                         </button>
                                         <span className="chat-react-count">
-                                            {msg.reactionCount ?? 0}
-                                        </span>
+                    {msg.reactionCount ?? 0}
+                </span>
+
+                                        {/* ✅ 내 메시지(mine)일 때만 ··· 메뉴 표시 */}
+                                        {mine && (
+                                            <div className="chat-actions-more">
+                                                {/* 세 점 버튼 */}
+                                                <button
+                                                    type="button"
+                                                    className="chat-more-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setActiveMenuId(
+                                                            activeMenuId === msg.chatId ? null : msg.chatId
+                                                        );
+                                                    }}
+                                                >
+                                                    ···
+                                                </button>
+
+                                                {/* 드롭다운 메뉴 */}
+                                                {activeMenuId === msg.chatId && (
+                                                    <div className="chat-more-menu">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDelete(msg.chatId)}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </React.Fragment>
