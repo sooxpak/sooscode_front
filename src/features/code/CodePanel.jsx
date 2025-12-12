@@ -1,7 +1,7 @@
-import Editor, {DiffEditor, useMonaco, loader} from '@monaco-editor/react';
+import Editor from '@monaco-editor/react';
 import {useEffect, useRef, useState} from "react";
 import {useDarkMode} from "@/hooks/useDarkMode.js";
-import styles from './CodeEditor.module.css';
+import styles from './CodePanel.module.css';
 import {useCode} from "@/features/code/hooks/useCode.js";
 import {api} from "@/services/api";
 
@@ -12,8 +12,9 @@ const CodePanel = () => {
     const [monacoInstance, setMonacoInstance] = useState(null);
     const [output, setOutput] = useState("");
 
-
-    // 테마 생성 함수 (라이트/다크 자동 적용)
+    /**
+     * 라이트/다크 자동 적용
+     */
     const applyTheme = (monaco) => {
         if (!monaco) return;
 
@@ -35,8 +36,9 @@ const CodePanel = () => {
         monaco.editor.setTheme("customTheme");
     };
 
-
-    // Editor 로딩 시 실행
+    /**
+     * Editor 로딩 시 실행
+     */
     const handleEditorMount = (editor, monaco) => {
         setEditorInstance(editor);
         setMonacoInstance(monaco);
@@ -51,7 +53,9 @@ const CodePanel = () => {
 
     };
 
-    // 다크모드 바뀔 때마다 테마 재적용
+    /**
+     * 테마 모드 바뀔 때마다 테마 재적용
+     */
     useEffect(() => {
         if (monacoInstance) {
             applyTheme(monacoInstance);
@@ -156,7 +160,6 @@ const CodePanel = () => {
         automaticLayout: true,
         overviewRulerLanes: 0,
         overviewRulerBorder: false,
-
         scrollbar: {
             verticalScrollbarSize: 4,
             verticalSliderSize: 4,
@@ -164,7 +167,7 @@ const CodePanel = () => {
     };
 
     return (
-        <div className={styles.relative}>
+        <div className={`${styles.relative} ${styles.editorWrapper}`}>
 
             <Editor
                 language="javascript"
@@ -180,19 +183,15 @@ const CodePanel = () => {
             {/* 하단 결과창 */}
             <div className={styles.bottomPane} ref={bottomRef}>
 
-                {/* 리사이즈 핸들 */}
+                {/* 리사이즈 바 */}
                 <div className={styles.resizer} onMouseDown={startResize} >
-                    <div className={styles.dotWrap}>
-                        <span className={styles.dot}></span>
-                        <span className={styles.dot}></span>
-                        <span className={styles.dot}></span>
-                    </div>
+                    <div className={styles.dotWrap} />
                 </div>
 
                 {/* 컴파일 창*/}
                 <div className={styles.resultHeader}>
                     <div className={styles.flex}>
-                        <button onClick={run} className={styles.btnRun}>
+                        <button onClick={run} className={styles.runButton}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                  className="lucide lucide-play-icon lucide-play">
@@ -200,7 +199,7 @@ const CodePanel = () => {
                                     d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"/>
                             </svg>
                         </button>
-                        <button onClick={reset} className={styles.btnReset}>
+                        <button onClick={reset} className={styles.resetButton}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                  className="lucide lucide-rotate-ccw-icon lucide-rotate-ccw">
@@ -208,7 +207,7 @@ const CodePanel = () => {
                                 <path d="M3 3v5h5"/>
                             </svg>
                         </button>
-                        <button onClick={copy} className={styles.btnCopy}>
+                        <button onClick={copy} className={styles.copyButton}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                              className="lucide lucide-copy-icon lucide-copy">
@@ -218,7 +217,7 @@ const CodePanel = () => {
                     </button>
                     </div>
                 </div>
-                <pre className={styles.resultOutput}>{output || "결과가 여기에 표시됩니다ㅋㅋ."}</pre>
+                <pre className={styles.resultOutput}>{output || "결과가 여기에 표시됩니다."}</pre>
             </div>
         </div>
     )
