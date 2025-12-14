@@ -5,12 +5,15 @@ import styles from "./NoticeSection.module.css";
 import Header from "./notice/Header";
 import Section from "./notice/Section";
 import NoticeEditor from "./notice/NoticeEditor";
+import { useUser } from "../../../../hooks/useUser";
 
 export default function NoticeSection() {
   const [searchParams] = useSearchParams();
   const classId = searchParams.get("classId");
   const [classInfo, setClassInfo] = useState(null);
   const [description, setDescription] = useState("");
+  const { user} = useUser();
+  const isStudent = user?.role === "STUDENT";
 
   useEffect(() => {
     if (!classId) return;
@@ -41,10 +44,15 @@ export default function NoticeSection() {
         </header>
 
         <Section classInfo={classInfo} />
-        <NoticeEditor
-          value={description}
-          onChange={setDescription}
-        />
+        {!isStudent && (
+        <>
+          <NoticeEditor
+            value={description}
+            onChange={setDescription}
+          />
+        </>
+      )}
+        
       </div>
 
       {/* 

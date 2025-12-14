@@ -23,6 +23,11 @@ export default function HCJCodePanelRender() {
 
   return (
     <div className={styles.HCJCodePanelRender}>
+
+      <div className={styles.previewHeader}>
+      </div>
+
+
       <iframe
         ref={iframeRef}
         className={styles.previewFrame}

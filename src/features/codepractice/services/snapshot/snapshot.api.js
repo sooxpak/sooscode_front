@@ -86,6 +86,14 @@ export const getSnapshotsByLanguageAndDate = async ({
     },
   });
 
-  // ⚠️ axios interceptor 때문에 res === response.data
+  // axios interceptor 때문에 res === response.data
   return res.data.content;
+};
+
+// 스냅샷 콘텐츠 단건 조회
+export const getSnapshotDetail = async ({ classId, snapshotId }) => {
+  const res = await api.get("/api/snapshot/read/each", {
+    params: { classId, snapshotId },
+  });
+  return res.data; // interceptor 기준: ApiResponse.data
 };

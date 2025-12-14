@@ -10,8 +10,11 @@
 .item:hover {
   background: var(--color-bg-hover);
 }
-
+.deleteBtn{
+  margin-left:auto;
+}
 .title {
+  display:flex;
   min-width: 0;
   white-space:nowrap;
   overflow:hidden;

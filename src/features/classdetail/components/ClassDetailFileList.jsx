@@ -2,11 +2,15 @@ import { useRef } from "react";
 import { useClassFiles, useFilesByDate, useUploadFiles } from "../services/classDetailFileService";
 import styles from "./ClassDetailFileList.module.css";
 import FileItem from "./FileItem";
+import { useUser } from "../../../hooks/useUser";
 
 export default function ClassDetailFileList({ classId,lectureDate  }) {
   const { data: fileList } = useClassFiles(classId, 0, 10);
   const { data: dateFiles, isLoading } = useFilesByDate(classId, lectureDate, 0, 10);
-
+  const { user} = useUser();
+  // 학생 권한체크
+  const isStudent = user?.role === "STUDENT";
+  console.log("user:", user);
   console.log("날짜별 파일 api : ", dateFiles )
 
   const uploadMutation = useUploadFiles();
@@ -50,26 +54,31 @@ export default function ClassDetailFileList({ classId,lectureDate  }) {
             file={file} 
             classId={classId} 
             lectureDate={lectureDate}
+            isStudent={isStudent}
           />
         ))}
       </div>
 
-      {/* 숨겨진 파일 input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        multiple
-        style={{ display: "none" }}
-        onChange={handleUpload}
-      />
+      {!isStudent && (
+        <>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            style={{ display: "none" }}
+            onChange={handleUpload}
+          />
 
-      {/* 클릭 버튼 */}
-      <button
-        className={styles.uploadButton}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        ⬆ 파일 등록
-      </button>
+          <button
+            className={styles.uploadButton}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            ⬆ 파일 등록
+          </button>
+        </>
+      )}
+
+      
     </div>
   );
 }

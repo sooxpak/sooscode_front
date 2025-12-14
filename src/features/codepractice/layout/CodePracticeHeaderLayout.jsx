@@ -9,9 +9,10 @@ import { usePracticeStore } from "@/features/codepractice/store/usePracticeStore
 import styles from "./CodePracticeHeaderLayout.module.css";
 import { useNavigate } from "react-router-dom";
 import { useDarkMode } from "@/hooks/useDarkMode";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_SNIPPETS } from "../constants/defaultSnippets";
 import { useSnapshotStore } from "../store/useSnapshotStore";
+import { buildHCJ } from "../utils/parseHCJ";
 
 // CopePractice의 Header 레이아웃
 export default function CodePracticeHeaderLayout({
@@ -26,7 +27,7 @@ export default function CodePracticeHeaderLayout({
   const run = usePracticeStore((s) => s.run);
   const resetCode = usePracticeStore((s) => s.resetCode);
   const setCode = usePracticeStore((s) => s.setCode);
-  const {isSidebarOpen, toggleSidebar, isSnapshotOpen, toggleSnapshot} = usePracticeUIStore();
+  const {isSidebarOpen, toggleSidebar, isSnapshotOpen, toggleSnapshot, toggleHCJSnapshot,} = usePracticeUIStore();
   const saveHCJSnapshot = useSnapshotStore((s) => s.saveHCJSnapshot);
   const language = usePracticeStore((s) => s.language);
   const [selectedLang, setSelectedLang] = useState(defaultLang);
@@ -80,6 +81,37 @@ export default function CodePracticeHeaderLayout({
     return () => window.removeEventListener("keydown", hadleKeydown);
   }, [run]);
 
+  // 새창에서 열기
+  const previewWindowRef = useRef(null);
+  const htmlCode = usePracticeStore((s) => s.htmlCode);
+  const cssCode  = usePracticeStore((s) => s.cssCode);
+  const jsCode   = usePracticeStore((s) => s.jsCode);
+  const openHCJInNewWindow = async () => {
+  const fullHTML = buildHCJ({
+    html: htmlCode,
+    css: cssCode,
+    js: jsCode,
+  });
+  await run();
+
+  if (!previewWindowRef.current || previewWindowRef.current.closed) {
+    previewWindowRef.current = window.open(
+      "about:blank",
+      "HCJ_PREVIEW",
+      "width=1200,height=800,resizable=yes,scrollbars=yes"
+    );
+  }
+
+  const win = previewWindowRef.current;
+  if (!win) return;
+
+  win.document.open();
+  win.document.write(fullHTML);
+  win.document.close();
+  win.focus();
+  };
+
+
 
   return (
     <header className={styles.wrapper}>
@@ -102,7 +134,17 @@ export default function CodePracticeHeaderLayout({
           사이드바
         </button>
 
-        <button className={`${styles.actionBtn} ${styles.snapshotBtn}`} onClick={toggleSnapshot}>
+        <button className={`${styles.actionBtn} ${styles.snapshotBtn}`}
+         onClick={() => {
+            if (language === "CSS_HTML_JS") {
+              toggleHCJSnapshot();
+            } else {
+              toggleSnapshot();
+            }
+          }}
+                  
+         
+         >
           {isSnapshotOpen ? <PanelRightClose size={18} /> : <PanelRightOpen size={18} />}
           스냅샷
         </button>
@@ -114,18 +156,28 @@ export default function CodePracticeHeaderLayout({
         </button>
         {language === "CSS_HTML_JS" && (
           <>
-            <button
+            {
+            
+             <button
               className={`${styles.actionBtn} ${styles.runBtn} ${styles.hcjBtn}`}
-              onClick={saveHCJSnapshot}
+              onClick={() => {
+                const title = window.prompt("스냅샷 이름을 입력하세요");
+                if (!title) return;
+                saveHCJSnapshot(title);
+              }}
             >
-              HCJ 저장
+              저장
             </button>
+            
+            
 
-            <button
+            
+            }
+              <button
               className={`${styles.actionBtn} ${styles.runBtn} ${styles.hcjBtn}`}
-              onClick={loadHCJSnapshot}
+              onClick={openHCJInNewWindow}
             >
-              HCJ 불러오기
+              새 창에서 실행
             </button>
           </>
         )}

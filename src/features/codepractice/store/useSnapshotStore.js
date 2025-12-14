@@ -23,8 +23,8 @@ export const useSnapshotStore = create((set, get) => ({
     set((state) => ({ refreshKey: state.refreshKey + 1 })),
   
   // HCJ 전용 save store
-  saveHCJSnapshot: async () => {
-  const { htmlCode, cssCode, jsCode } =
+  saveHCJSnapshot: async (title) => {
+  const { htmlCode, cssCode, jsCode} =
     usePracticeStore.getState();
 
   const fullHTML = buildHCJ({
@@ -32,9 +32,10 @@ export const useSnapshotStore = create((set, get) => ({
     css: cssCode,
     js: jsCode,
   });
+  
 
   await saveSnapshot({
-    title: "HCJ 스냅샷",
+    title,
     content: fullHTML,
     language: "CSS_HTML_JS",
     classId: 1,
@@ -43,36 +44,29 @@ export const useSnapshotStore = create((set, get) => ({
   get().triggerRefresh();
   },
 
+  snapshotHTML: "",
+  snapshotCSS: "",
+  snapshotJS: "",
+
   // HCJ Load Store Method
-  loadSelectedHCJSnapshot: () => {
-    const snapshot = get().selectedSnapshot;
+  loadSelectedHCJSnapshot: (snapshot) => {
+  if (!snapshot?.content) {
+    console.warn("HCJ 로드 스킵: content 없음", snapshot);
+    return;
+  }
 
-    if (!snapshot) {
-      alert("선택된 스냅샷이 없습니다.");
-      return;
-    }
+  if (snapshot.language !== "CSS_HTML_JS") return;
 
-    if (snapshot.language !== "CSS_HTML_JS") {
-      alert("HCJ 스냅샷이 아닙니다.");
-      return;
-    }
+  const { html, css, js } = parseHCJ(snapshot.content);
 
-    const { html, css, js } = parseHCJ(snapshot.content);
+  set({
+    snapshotHTML: html,
+    snapshotCSS: css,
+    snapshotJS: js,
+  });
+},
 
-    const {
-      setLanguage,
-      setHTML,
-      setCSS,
-      setJS,
-    } = usePracticeStore.getState();
 
-    // 👉 HCJ 모드로 전환 + 코드 주입
-    setLanguage("CSS_HTML_JS");
-    setHTML(html);
-    setCSS(css);
-    setJS(js);
-
-  },
   resetSnapshots: () =>
   set({
     snapshots: [],

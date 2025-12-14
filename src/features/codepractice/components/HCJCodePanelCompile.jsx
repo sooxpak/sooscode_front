@@ -21,7 +21,7 @@ export default function HCJCodePanelCompile() {
     if (data.type === "HCJ_ERROR") {
       setConsoleOutput(
         usePracticeStore.getState().consoleOutput +
-        "❌ ERROR: " + data.message + "\n"
+        "ERROR: " + data.message + "\n"
       );
     }
   }

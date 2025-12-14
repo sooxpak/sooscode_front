@@ -5,6 +5,8 @@ import { useDarkMode } from "@/hooks/useDarkMode";
 import CodePracticeHeader from './CodePracticeHeader';
 import CodePracticeCompileContainer from './CodePracticeCompileContainer';
 import { usePracticeStore } from '../store/usePracticeStore';
+import { useSnapshotStore } from '../store/useSnapshotStore';
+import { saveSnapshot } from '../services/snapshot/snapshot.api';
 
 export default function CodePracticePanel() {
   const { darkMode } = useDarkMode();
@@ -15,8 +17,8 @@ export default function CodePracticePanel() {
   const language = usePracticeStore((s) => s.language);
   const setLanguage = usePracticeStore((s) => s.setLanguage);
   const storeOutput = usePracticeStore((s) => s.output);
-  const title="code practice"
-
+  const [snapshotTitle, setSnapshotTitle] = useState("");
+  const triggerRefresh = useSnapshotStore((s) => s.triggerRefresh);
   // 테마 생성 함수 (라이트/다크 자동 적용)
   const applyTheme = (monaco) => {
     if (!monaco) return;
@@ -46,7 +48,24 @@ export default function CodePracticePanel() {
     applyTheme(monaco); // 초기 적용
   };
 
-  // ★ 다크모드 바뀔 때마다 테마 재적용
+  const handleSaveNew = async () => {
+    const { code, language, classId } = usePracticeStore.getState();
+    if (!snapshotTitle.trim()) {
+      alert("제목을 입력하세요");
+      return;
+    }
+    await saveSnapshot({
+    title: snapshotTitle,
+    content: code,
+    language,
+    classId,
+    });
+
+    setSnapshotTitle("");
+    triggerRefresh();
+  };
+
+  // 다크모드 바뀔 때마다 테마 재적용
   useEffect(() => {
     if (monacoInstance) {
       applyTheme(monacoInstance);
@@ -56,8 +75,10 @@ export default function CodePracticePanel() {
   return (
     <div className={styles.practicePanel}>
       <CodePracticeHeader 
-          title={title}
-          onChangeLang={setLanguage}
+      showTitleInput
+          snapshotTitle={snapshotTitle}
+          onChangeSnapshotTitle={setSnapshotTitle}
+          onSaveNew={handleSaveNew}
       />
 
       <div className={styles.codeContainer}>

@@ -10,4 +10,7 @@ export const usePracticeUIStore = create((set) => ({
   isSnapshotOpen: true,
   toggleSnapshot: () => set((s) => ({ isSnapshotOpen: !s.isSnapshotOpen })),
 
+  isHCJSnapshotOpen: true,
+  toggleHCJSnapshot: () =>
+    set((s) => ({ isHCJSnapshotOpen: !s.isHCJSnapshotOpen })),
 }));

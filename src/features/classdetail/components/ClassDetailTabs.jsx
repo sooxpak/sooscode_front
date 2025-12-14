@@ -11,7 +11,7 @@ export default function ClassDetailTabs({ activeTab, onChange }) {
         className={`${styles.tab} ${activeTab === "notice" ? styles.active : ""}`}
         onClick={() => onChange("notice")}
       >
-        공지사항
+        강의소개
       </div>
 
       <div

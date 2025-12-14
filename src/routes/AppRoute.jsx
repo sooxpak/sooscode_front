@@ -34,6 +34,7 @@ import LogoutButton from "@/features/auth/components/base/LogoutButton.jsx";
 // 현영 테스트
 import AdminPage from "@/pages/admin/AdminPage.jsx";
 import CodePracticePage from '../pages/codepractice/CodePracticePage';
+import CodeTestPage from '../pages/codepractice/CodeTestPage';
 // 효상 테스트
 
 
@@ -54,6 +55,7 @@ export default function AppRoute() {
                 <Route path="/classdetail/student" element={<StudentClassDetail />} />
                 <Route path="/classdetail/instructor" element={<InstructorClassDetail />} />
                 <Route path="/codepractice" element={<CodePracticePage />} />
+                <Route path="/test" element={<CodeTestPage />} />
 
                 <Route path="/" element={<Home />} />
 

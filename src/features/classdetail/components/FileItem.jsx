@@ -4,7 +4,7 @@ import { formatDate } from "../../../utils/date";
 import { useDeleteFiles } from "../services/classDetailFileService";
 import styles from "./FileItem.module.css";
 
-export default function FileItem({ file ,classId,lectureDate }) {
+export default function FileItem({ file ,classId,lectureDate,isStudent }) {
   const deleteMutation = useDeleteFiles();
   console.log(lectureDate);
 
@@ -35,9 +35,14 @@ export default function FileItem({ file ,classId,lectureDate }) {
           <div className={styles.name}>{file.fileName}</div>
           <div className={styles.date}>{formatDate(file.createdAt)}</div>
         </div>
-        <button className={styles.deleteBtn} onClick={handleDelete}>
-            <X size={20} strokeWidth={2.5} />
-        </button>
+        {!isStudent && (
+          <>
+            <button className={styles.deleteBtn} onClick={handleDelete}>
+                <X size={20} strokeWidth={2.5} />
+            </button>
+          </>
+        )}
+        
         <button className={styles.downloadBtn} onClick={handleDownload}>
           <Download size={20} strokeWidth={2.5} />
         </button>

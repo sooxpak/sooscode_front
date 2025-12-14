@@ -157,19 +157,20 @@ return (
   <div className={styles.snapshotPanel}>
     <CodePracticeHeader 
       title={
-        isReadOnly ? (
-          <span className={styles.ellipsisTitle}>
-            {selectedSnapshot?.title || "snapshot"}
-          </span>
-        ) : (
-          <input
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            className={styles.titleInput}
-            autoFocus
-          />
-        )
-      }
+  isReadOnly ? (
+    <span className={styles.ellipsisTitle}>
+      {selectedSnapshot?.title || "snapshot"}
+    </span>
+  ) : (
+    <input
+      value={editTitle}
+      onChange={(e) => setEditTitle(e.target.value)}
+      className={styles.titleInput}
+      autoFocus
+    />
+  )
+}
+
       showCopyButton={!!selectedSnapshot && !isNew && isReadOnly}
       onCopy={() => {if (!editorInstance) return;
         navigator.clipboard.writeText(editorInstance.getValue());
@@ -214,7 +215,7 @@ return (
               width="100%"
               theme="customTheme"
               onMount={handleEditorMount}
-              language={selectedSnapshot?.language || "JAVA"}
+              language={selectedSnapshot?.language?.toLowerCase() || "java"}
               value={
                 selectedSnapshot
                   ? selectedSnapshot.content
