@@ -73,8 +73,8 @@ const useRegister = () => {
         else if (!/\S+@\S+\.\S+/.test(form.email))
             newErr.email = "이메일 형식 오류";
 
-        if (form.password.length < 8 || form.password.length > 20)
-            newErr.password = "비밀번호 8~20자";
+        if (form.password.length < 8 || form.password.length > 16)
+            newErr.password = "비밀번호 8~16자";
         if (form.password !== form.confirmPassword)
             newErr.confirmPassword = "비밀번호 불일치";
 
