@@ -1,6 +1,7 @@
 import {useEffect, useMemo} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import { SocketProvider, useSocketContext } from "@/features/classroom/contexts/SocketContext.jsx";
+import {ClassModeProvider} from "@/features/classroom/contexts/ClassModeContext.jsx";
 import {ClassroomProvider, useClassroom} from "@/features/classroom/contexts/ClassroomContext.jsx";
 import { useSidebar } from "@/features/classroom/hooks/class/useSidebar.js";
 import {decodeNumber} from "@/utils/urlEncoder.js";
@@ -8,7 +9,6 @@ import ClassHeader from "./ClassHeader.jsx";
 import ClassSidebar from "./ClassSidebar.jsx";
 import ClassBody from "./ClassBody.jsx";
 import styles from './ClassroomPage.module.css';
-
 const ClassroomPage = () => {
     const { encodedId } = useParams();
     const navigate = useNavigate();
@@ -34,7 +34,9 @@ const ClassroomPage = () => {
     return (
         <ClassroomProvider classId={classId}>
             <SocketProvider classId={classId}>
-                <ClassroomContent />
+                <ClassModeProvider classId={classId}>
+                    <ClassroomContent />
+                </ClassModeProvider>
             </SocketProvider>
         </ClassroomProvider>
     );

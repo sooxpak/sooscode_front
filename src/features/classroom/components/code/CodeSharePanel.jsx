@@ -2,8 +2,9 @@ import Editor from '@monaco-editor/react';
 import {useEffect, useRef, useState} from "react";
 import {useDarkMode} from "@/hooks/useDarkMode.js";
 import styles from './CodePanel.module.css';
+import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
 
-const CodeSharePanel = ({socket, classId}) => {
+const CodeSharePanel = ({classId}) => {
     const {darkMode} = useDarkMode();
 
     // 로컬 상태 사용 (독립적인 코드 관리)
@@ -12,6 +13,7 @@ const CodeSharePanel = ({socket, classId}) => {
     const [monacoInstance, setMonacoInstance] = useState(null);
     const [output, setOutput] = useState("");
     const [lastUpdateTime, setLastUpdateTime] = useState(null);
+    const socket = useSocketContext();
 
     /**
      * 웹소켓 구독

@@ -6,22 +6,33 @@ import { useResize } from "@/features/classroom/hooks/class/useResize.js";
 import SnapshotPanel from "@/features/classroom/components/snapshot/SnapshotPanel.jsx";
 import CodePanel from "@/features/classroom/components/code/CodePanel.jsx";
 import CodeSharePanel from "@/features/classroom/components/code/CodeSharePanel.jsx";
+import {useParams} from "react-router-dom";
+import { decodeNumber } from "@/utils/urlEncoder";
+import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
+import ModeToggleBar from "@/features/classroom/components/code/ModeToggleBar.jsx";
 
 const ClassBody = () => {
     const { collapsed } = useSidebar();
     const { user } = useUser();
     const [activeTab, setActiveTab] = useState('code');
     const { targetRef: leftRef, startResize } = useResize();
+    const { encodedId } = useParams();
+    const socket = useSocketContext();
 
     // 권한 별 다른 글씨
     const isInstructor = user?.role === 'INSTRUCTOR';
     const isStudent = user?.role === 'STUDENT';
 
+    /**
+     * 수업 모드 변경
+     */
     const getRightPanelLabel = () => {
         if (isInstructor) return '학생 코드';
         if (isStudent) return '강사 코드';
         return '학생 코드';
     };
+
+    const classId = decodeNumber(encodedId);
 
     return (
         <div
@@ -42,9 +53,14 @@ const ClassBody = () => {
                 <div className={styles.content}>
                     {/* 왼쪽 패널 */}
                     <div className={`${styles.inner} ${styles.left}`} ref={leftRef}>
-                        <button className={styles.tab}>내 코드</button>
-                        <CodePanel />
+                        <div className={styles.tabContainer}>
+                            <button className={styles.tab}>내 코드</button>
+                            {/* 모드 전환 바를 왼쪽 패널 상단에 추가 */}
+                            <ModeToggleBar />
+                        </div>
+                        <CodePanel classId={classId} />
                     </div>
+
 
                     {/* 리사이즈 바 */}
                     <div className={styles.resizer} onMouseDown={startResize}>
@@ -71,7 +87,7 @@ const ClassBody = () => {
                             className={styles.panel}
                             style={{ display: activeTab === 'code' ? 'block' : 'none' }}
                         >
-                            <CodeSharePanel />
+                            <CodeSharePanel classId={classId} />
                         </div>
                         <div
                             className={styles.panel}

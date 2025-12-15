@@ -4,19 +4,26 @@ import {useDarkMode} from "@/hooks/useDarkMode.js";
 import styles from './CodePanel.module.css';
 import {useCode} from "@/features/classroom/hooks/code/useCode.js";
 import {api} from "@/services/api.js";
+import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
+import { useClassMode, CLASS_MODES } from "@/features/classroom/contexts/ClassModeContext";
 
-
-const CodePanel = ({socket, classId}) => {
+const CodePanel = ({classId}) => {
     const {darkMode} = useDarkMode();
     const {code, setCode, editorInstance, setEditorInstance} = useCode();
     const [monacoInstance, setMonacoInstance] = useState(null);
     const [output, setOutput] = useState("");
     const [lastSavedTime, setLastSavedTime] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const socket = useSocketContext();
+    const { mode } = useClassMode();
+
 
     // 디바운싱을 위한 타이머 ref
     const debounceTimerRef = useRef(null);
     const isInitialLoadRef = useRef(true);
+
+
+    const isReadOnly = mode === CLASS_MODES.VIEW_ONLY;
 
     /**
      * 페이지 진입 시 자동 저장된 코드 불러오기
@@ -54,6 +61,9 @@ const CodePanel = ({socket, classId}) => {
         if (isInitialLoadRef.current || isLoading) return;
 
         if (!socket || !socket.connected || !classId) return;
+
+        // 읽기모드에서는 자동전송 안함
+        if (isReadOnly) return;
 
         // 이전 타이머 취소
         if (debounceTimerRef.current) {
@@ -128,6 +138,14 @@ const CodePanel = ({socket, classId}) => {
         }
     };
 
+    // 모드가 변경될 때 에디터 옵션 업데이트
+    useEffect(() => {
+        if (editorInstance) {
+            editorInstance.updateOptions({ readOnly: isReadOnly });
+        }
+    }, [isReadOnly, editorInstance]);
+
+
     /**
      * 테마 모드 바뀔 때마다 테마 재적용
      */
@@ -186,6 +204,7 @@ const CodePanel = ({socket, classId}) => {
     }
 
     const reset = () => {
+        if (isReadOnly) return;
         setCode("// write code");
         if (editorInstance) editorInstance.setValue("// write code");
     };
@@ -209,6 +228,7 @@ const CodePanel = ({socket, classId}) => {
         automaticLayout: true,
         overviewRulerLanes: 0,
         overviewRulerBorder: false,
+        readOnly: isReadOnly, // 모드에 따라 읽기 전용 설정
         scrollbar: {
             verticalScrollbarSize: 4,
             verticalSliderSize: 4,
