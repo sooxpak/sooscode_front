@@ -1,6 +1,9 @@
 import React from "react";
-import CheckIcon from "./ReactionButton.jsx";
+import CheckIcon from "./button/ReactionButton.jsx";
 import useReactionUsers from "@/features/classroom/hooks/chat/useReactionUserList.js";
+import DeleteButton from "@/features/classroom/components/chat/button/DeleteButton.jsx";
+import CopyButton from "@/features/classroom/components/chat/button/CopyButton.jsx";
+import ReplyButton from "@/features/classroom/components/chat/button/ReplyButton.jsx";
 
 export default function ChatMessageItem({
                                             msg,
@@ -126,7 +129,11 @@ export default function ChatMessageItem({
                 </span>
                     {visible && users.length > 0 && (
                         <div className="chat-react-tooltip">
-                            {users.map((u) => u.name).join(", ")}
+                            {users.map((u) => (
+                                <div key={u.userId} className="chat-react-user">
+                                    {u.name}
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -151,32 +158,23 @@ export default function ChatMessageItem({
                         {/* 세 점 메뉴 내용 */}
                         {activeMenuId === msg.chatId && (
                             <div className="chat-more-menu">
-                                <button
-                                    type="button"
+                                <CopyButton
                                     onClick={handleCopy}
-                                >
-                                    복사
-                                </button>
+                                    />
 
                                 {mine ? (
                                     // 내가 쓴 메시지 → 삭제만 가능
-                                    <button
-                                        type="button"
+                                    <DeleteButton
                                         onClick={() => handleDelete(msg.chatId)}
-                                    >
-                                        삭제
-                                    </button>
+                                    />
                                 ) : (
                                     // 남의 메시지 → 답장하기만 가능
-                                    <button
-                                        type="button"
+                                    <ReplyButton
                                         onClick={() => {
                                             handleReply(msg);
                                             setActiveMenuId(null); // 메뉴 닫기
                                         }}
-                                    >
-                                        답장하기
-                                    </button>
+                                    />
                                 )}
                             </div>
                         )}
