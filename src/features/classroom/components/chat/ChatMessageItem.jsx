@@ -1,4 +1,7 @@
 import React from "react";
+import CheckIcon from "./ReactionButton.jsx";
+import useReactionUsers from "@/features/classroom/hooks/chat/useReactionUserList.js";
+
 export default function ChatMessageItem({
                                             msg,
                                             myEmail,
@@ -16,6 +19,8 @@ export default function ChatMessageItem({
                                         }) {
     const mine = msg.email === myEmail;          // 내 메시지인지
     const isDeleted = msg.deleted === true;      // 삭제 여부 (boolean)
+
+    const {users, visible, onEnter, onLeave} = useReactionUsers();
 
     // 메세지 복사
     const handleCopy = () => {
@@ -103,17 +108,28 @@ export default function ChatMessageItem({
 
             <div className="chat-actions">
                 {/* 공감 버튼 / 카운트 */}
+                <div
+                    className="chat-react-wrap"
+                    onMouseEnter={() => onEnter(msg.chatId, msg.reactionCount)}
+                    onMouseLeave={onLeave}
+                >
                 <button
                     type="button"
-                    className="chat-react-btn"
+                    className={`chat-react-btn ${msg.reactedByMe ? "is-active" : ""}`}
                     onClick={() => !isDeleted && sendReaction(msg.chatId)}
                     disabled={isDeleted} // 삭제된 메시지는 공감 불가
                 >
-                    ✅
+                    <CheckIcon className="chat-react-icon" />
                 </button>
                 <span className="chat-react-count">
                     {msg.reactionCount ?? 0}
                 </span>
+                    {visible && users.length > 0 && (
+                        <div className="chat-react-tooltip">
+                            {users.map((u) => u.name).join(", ")}
+                        </div>
+                    )}
+                </div>
 
                 {/* 삭제된 메시지는 ··· 메뉴 안 보이게 */}
                 {!isDeleted && (
