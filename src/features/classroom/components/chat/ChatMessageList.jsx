@@ -1,5 +1,6 @@
 import React from "react";
 import ChatMessageItem from "./ChatMessageItem.jsx";
+import ChatTypingIndicator from "@/features/classroom/components/chat/button/ChatTypingIndicator.jsx";
 
 // YYYY-MM-DD 키 뽑기 (날짜 변경 여부 비교용)
 const getDateKey = (iso) => {
@@ -111,9 +112,12 @@ export default function ChatMessageList({
             {/* 자동 스크롤용 anchor */}
             {typingUsers?.length > 0 && (
                 <div className="chat-typing-indicator">
+                    <span className="chat-typing-text">
                     {typingUsers.length === 1
                         ? `${typingUsers[0].name} 입력 중…`
                         : `${typingUsers[0].name} 외 ${typingUsers.length - 1}명 입력 중…`}
+                    </span>
+                    <ChatTypingIndicator />
                 </div>
             )}
 

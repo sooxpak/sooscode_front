@@ -400,4 +400,17 @@
     pointer-events: auto;
     transform: translateY(0);
 }
+.chat-typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.chat-typing-text {
+    white-space: nowrap;
+}
+
 

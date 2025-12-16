@@ -37,6 +37,7 @@ export const useChatPanel = (classId = 1) => {
     const { user } = useUser();
     const myEmail = user?.email ?? null;
     const myName = user?.name ?? null;
+    console.log("User", user , "myemail", myEmail, "myName", myName ,"*********************")
 
     const [typingUsers, setTypingUsers] = useState([]); // [{userId, name}]
     const typingTimerRef = useRef(null);
@@ -220,16 +221,16 @@ export const useChatPanel = (classId = 1) => {
         if (!connected) return;
 
         const sub = subscribe(
-            `/topic/chat/${classId}/typing`, // 🔥 서버 convertAndSend 경로
+            `/topic/chat/${classId}/typing`, //  서버 convertAndSend 경로
             (body) => {
-                console.log("🟥 typing raw:", body);   // 🔥 이게 찍혀야 UI 나옴
+                console.log("🟥 typing raw:", body);   //  이게 찍혀야 UI 나옴
 
                 const data = JSON.parse(body.body ?? body);
 
-                console.log("✅ typing received:", data);
+                console.log(" typing received:", data);
 
-                // 내 typing은 표시 안 함
-                if (data.userId === user?.userId) return;
+                // 내 typing은 표시 안 함 지금 user?userId를 안슴
+                if (data.email === user.email) return;
 
                 setTypingUsers((prev) => {
                     const exists = prev.some((u) => u.userId === data.userId);
