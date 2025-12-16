@@ -42,6 +42,7 @@ export const useChatPanel = (classId = 1) => {
     const [typingUsers, setTypingUsers] = useState([]); // [{userId, name}]
     const typingTimerRef = useRef(null);
     const lastSentRef = useRef(0);
+    const isAtBottomRef = useRef(true);
 
 
 
@@ -52,8 +53,10 @@ export const useChatPanel = (classId = 1) => {
 
         const threshold = 20; // 바닥 기준 (px)
         const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        const atBottom = distanceFromBottom < threshold;
 
-        setIsAtBottom(distanceFromBottom < threshold);
+        setIsAtBottom(atBottom);
+        isAtBottomRef.current = atBottom;
     };
 
     // ---------------- 입장 알림 (처음 연결시) ----------------
@@ -232,15 +235,31 @@ export const useChatPanel = (classId = 1) => {
                 // 내 typing은 표시 안 함 지금 user?userId를 안슴
                 if (data.email === user.email) return;
 
+
                 setTypingUsers((prev) => {
                     const exists = prev.some((u) => u.userId === data.userId);
 
+                    let next = prev;
+
                     if (data.typing) {
-                        return exists
+                        next = exists
                             ? prev
                             : [...prev, { userId: data.userId, name: data.name }];
+                    } else {
+                        next = prev.filter((u) => u.userId !== data.userId);
                     }
-                    return prev.filter((u) => u.userId !== data.userId);
+
+                    //  message useEffect랑 같은 철학
+                    const increased = next.length > prev.length;
+
+                    if (increased && isAtBottomRef.current) {
+                        // DOM 업데이트 이후로 밀어주기
+                        requestAnimationFrame(() => {
+                            bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+                        });
+                    }
+
+                    return next;
                 });
             }
         );
