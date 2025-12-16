@@ -6,8 +6,6 @@ import {useCode} from "@/features/classroom/hooks/code/useCode.js";
 import {api} from "@/services/api.js";
 import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
 import { useClassMode, CLASS_MODES } from "@/features/classroom/contexts/ClassModeContext";
-import { useQuiz } from "@/features/classroom/contexts/QuizContext";
-import QuizProblemPanel from "./QuizProblemPanel";
 
 const CodePanel = ({classId, isInstructor = false}) => {
     const {darkMode} = useDarkMode();

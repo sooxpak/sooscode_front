@@ -7,7 +7,6 @@ import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
 import styles from './CodePanel.module.css';
 import {api} from "@/services/api.js";
 import {CLASS_MODES, useClassMode} from "@/features/classroom/contexts/ClassModeContext.jsx";
-import {useCode} from "@/features/classroom/hooks/code/useCode.js";
 
 const CodeSharePanel = ({ classId, isInstructor = false }) => {
     const { darkMode } = useDarkMode();

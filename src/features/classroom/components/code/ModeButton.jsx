@@ -1,19 +1,10 @@
 import styles from "@/features/classroom/components/code/TopButtonBar.module.css";
 import { CLASS_MODES, useClassMode } from "@/features/classroom/contexts/ClassModeContext.jsx";
-import { useQuiz } from "@/features/classroom/contexts/QuizContext.jsx";
-import { useState } from "react";
 
 const ModeButton = () => {
     const { mode, changeMode } = useClassMode();
-    const { startQuiz } = useQuiz();
-    const [showQuizModal, setShowQuizModal] = useState(false);
 
     const handleModeChange = (newMode) => {
-        // 퀴즈 모드면 모달 처리 (나중에)
-        // if (newMode === CLASS_MODES.QUIZ) {
-        //     setShowQuizModal(true);
-        //     return;
-        // }
 
         changeMode(newMode);
     };
