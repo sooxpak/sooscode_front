@@ -97,7 +97,7 @@
 }
 
 .left {
-    width: 50%;
+    /*width: 50%;*/
     min-width: 300px;
     height: 100%;
 }
@@ -116,19 +116,64 @@
 /* ============================================
    리사이즈 바
    ============================================ */
-.resizer {
-    width: 10px;
+/*.resizer {*/
+/*    width: 10px;*/
+/*    background: transparent;*/
+/*    cursor: col-resize;*/
+/*    position: relative;*/
+/*    transition: 0.3s;*/
+/*    z-index: 101;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*}*/
+
+/*.resizer:hover {*/
+/*    background: var(--color-bg-tertiary);*/
+/*}*/
+
+/*.resizerInner {*/
+/*    width: 3px;*/
+/*    height: 40px;*/
+/*    background: var(--color-border-medium);*/
+/*    border-radius: 2px;*/
+/*    opacity: 0;*/
+/*    transition: opacity 0.2s;*/
+/*}*/
+
+/*.resizer:hover .resizerInner {*/
+/*    opacity: 1;*/
+/*}*/
+
+/* 수직 리사이저 (에디터와 결과 패널 사이) */
+.verticalResizer {
+    height: 10px;
+    width: 100%;
     background: transparent;
-    cursor: col-resize;
+    cursor: row-resize;
     position: relative;
-    z-index: 1;
-    right: 0;
     transition: 0.3s;
     z-index: 101;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.resizer:hover {
+.verticalResizer:hover {
     background: var(--color-bg-tertiary);
+}
+
+.dotWrap {
+    width: 40px;
+    height: 3px;
+    background: var(--color-border-medium);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.verticalResizer:hover .dotWrap {
+    opacity: 1;
 }
 
 /* ============================================
@@ -138,4 +183,21 @@
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid var(--color-border-medium);
+}
+/* ============================================
+   스냅샷 버튼
+   ============================================ */
+.snapButtoncontainer {
+    width: calc(100% + 10px);
+    display: flex;
+    height: 48px;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-light);
+    justify-content: end;
+}
+.left .tabContainer {
+    border-bottom: none;
 }
