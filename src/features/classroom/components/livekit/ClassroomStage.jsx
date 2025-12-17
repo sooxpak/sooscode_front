@@ -15,7 +15,7 @@ export default function ClassroomStage({ isTeacher }) {
   const [showMyPreview, setShowMyPreview] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMultiView, setIsMultiView] = useState(false);
-  const [focusedParticipant, setFocusedParticipant] = useState(null);
+const [focusedTrack, setFocusedTrack] = useState(null);
 
   const room = useRoomContext();
   if (!room) {
@@ -129,32 +129,21 @@ if (isScreenSharing) {
      학생 화면 전용
      👉 "선생님 트랙만" 필터링
   =============================== */
-  const teacherIdentity = "teacher"; // ⚠️ 실제 identity에 맞게 수정
-
   const teacherScreenShareTracks = tracks.filter(
-    (t) =>
-      t.publication?.source === Track.Source.ScreenShare &&
-      !t.participant?.isLocal &&
-      t.participant?.identity === teacherIdentity
-  );
+  (t) =>
+    t.publication?.source === Track.Source.ScreenShare &&
+    !t.participant?.isLocal
+);
 
+
+  // 
   const teacherCameraTracks = tracks.filter(
-    (t) =>
-      t.publication?.source === Track.Source.Camera &&
-      !t.participant?.isLocal &&
-      !t.publication.isMuted &&
-      !!t.publication.track &&
-      t.participant?.identity === teacherIdentity
-  );
-
-  /* ===============================
-     포커스 학생 (선생님 화면)
-  =============================== */
-  const focusedTrack =
-    cameraTrackRefs.find((t) => {
-      if (t.participant?.identity !== focusedParticipant) return false;
-      return !t.publication.isMuted && !!t.publication.track;
-    }) ?? null;
+  (t) =>
+    t.publication?.source === Track.Source.Camera &&
+    !t.participant?.isLocal &&
+    !t.publication.isMuted &&
+    !!t.publication.track
+);
 
   /* ===============================
      전체화면
@@ -172,28 +161,65 @@ if (isScreenSharing) {
     }
   };
 
+  useEffect(() => {
+  if (!room) return;
+
+  console.group("🎥 LOCAL PUBLISH STATUS (TEACHER)");
+  room.localParticipant.videoTrackPublications.forEach((pub, sid) => {
+    console.log({
+      sid,
+      source: pub.source,
+      muted: pub.isMuted,
+      hasTrack: !!pub.track,
+      trackSid: pub.trackSid,
+    });
+  });
+  console.groupEnd();
+}, [room]);
+
   /* ===============================
      Debug
   =============================== */
-  useEffect(() => {
-    console.group("🎥 Camera Track Status");
-    tracks
-      .filter((t) => t.publication?.source === Track.Source.Camera)
-      .forEach((t) => {
-        const isCameraOn =
-          !t.publication.isMuted && !!t.publication.track;
+  // useEffect(() => {
+  //   console.group("🎥 Camera Track Status");
+  //   tracks
+  //     .filter((t) => t.publication?.source === Track.Source.Camera)
+  //     .forEach((t) => {
+  //       const isCameraOn =
+  //         !t.publication.isMuted && !!t.publication.track;
 
-        console.log(
-          `[${t.participant.isLocal ? "LOCAL" : "REMOTE"}] ${t.participant.identity}`,
-          {
-            camera: isCameraOn ? "ON" : "OFF",
-            muted: t.publication.isMuted,
-            hasTrack: !!t.publication.track,
-          }
-        );
-      });
-    console.groupEnd();
-  }, [tracks]);
+  //       console.log(
+  //         `[${t.participant.isLocal ? "LOCAL" : "REMOTE"}] ${t.participant.identity}`,
+  //         {
+  //           camera: isCameraOn ? "ON" : "OFF",
+  //           muted: t.publication.isMuted,
+  //           hasTrack: !!t.publication.track,
+  //         }
+  //       );
+  //     });
+  //   console.groupEnd();
+  // }, [tracks]);
+
+  useEffect(() => {
+  if (!room) return;
+
+  console.log(
+    "👥 remoteParticipants:ㅇㅇ",
+    Array.from(room.remoteParticipants.values()).map(p => ({
+      identity: p.identity,
+      isLocal: p.isLocal,
+      isCameraEnabled: p.isCameraEnabled,
+      isScreenShareEnabled: p.isScreenShareEnabled,
+      tracks: Array.from(p.tracks.values()).map(t => ({
+        source: t.source,
+        muted: t.isMuted,
+        subscribed: t.isSubscribed,
+      })),
+    }))
+  );
+}, [room]);
+
+
 
   /* ===============================
      Render
@@ -207,10 +233,17 @@ if (isScreenSharing) {
             className={styles.teacherVideoContain}
           />
         ) : isMultiView ? (
+          // <MultiView
+          //   participants={multiViewParticipants}
+          //   onSelectParticipant={setFocusedParticipant}
+          // />
           <MultiView
-            participants={multiViewParticipants}
-            onSelectParticipant={setFocusedParticipant}
-          />
+  participants={multiViewParticipants}
+  onSelectParticipant={(trackRef) => {
+    setFocusedTrack(trackRef); 
+    setIsMultiView(false);
+  }}
+/>
         ) : myScreenShare ? (
           <VideoTrack
             trackRef={myScreenShare}
@@ -270,13 +303,13 @@ if (isScreenSharing) {
 
       {isTeacher ? (
         <InstructorControlBar
-          onToggleMultiView={() => {
-            setFocusedParticipant(null);
-            setIsMultiView((v) => !v);
-          }}
-          isMultiView={isMultiView}
-          onGoMyView={() => setFocusedParticipant(null)}
-        />
+  onToggleMultiView={() => {
+    setFocusedTrack(null);     
+    setIsMultiView((v) => !v);
+  }}
+  isMultiView={isMultiView}
+  onGoMyView={() => setFocusedTrack(null)} 
+/>
       ) : (
         <StudentControlBar
           showMyPreview={showMyPreview}

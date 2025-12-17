@@ -56,14 +56,8 @@
 
 .thumbnailWrapper {
   position: relative;
-  cursor: pointer;
 }
 
-/* hover 시 이미지 어둡게 */
-.thumbnailWrapper:hover .thumbnail {
-  filter: brightness(0.5);
-  transition: filter 0.25s ease;
-}
 
 /* 오버레이 텍스트 */
 .overlay {
@@ -135,6 +129,56 @@
   z-index: 5;
 }
 
+.thumbnailWrapper {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* 썸네일 */
+.thumbnail {
+  width: 100%;
+  display: block;
+  transition:
+    filter var(--transition-base),
+    transform var(--transition-base);
+}
+
+/* hover overlay */
+.hoverOverlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+
+  pointer-events: none; /* 중요 */
+}
+
+/* hover 시 효과 */
+.thumbnailWrapper:hover .thumbnail {
+  filter: blur(2px) brightness(0.75);
+  transform: scale(1.02);
+}
+
+.thumbnailWrapper:hover .hoverOverlay {
+  opacity: 1;
+}
+
+/* 중앙 텍스트 */
+.overlayText {
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
+
 
 
 
@@ -144,3 +188,5 @@
     padding: 8px 10px;
   }
 }
+
+

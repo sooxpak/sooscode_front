@@ -23,32 +23,19 @@ export default function LectureCard({
 
   return (
     <div className={styles.card}>
-      <div className={styles.thumbnailWrapper}>
+      <div
+        className={styles.thumbnailWrapper}
+        onClick={onClick}   // ← hover 상태에서 클릭 시 강의 상세 이동
+      >
         <img
           className={styles.thumbnail}
           src={imageUrl || defaultImg}
           alt={title}
-          onClick={() => {
-            if (!isOnAir) {
-              // TODO: 나중에 토스트 메시지 추가
-              // toast("강의 시간이 아닙니다");
-              return;
-            }
-            handleJoinClass(classId);
-          }}
         />
 
-        {/* ON AIR 상태 뱃지 */}
-        {isOnAir && (
-          <div className={styles.liveBadge}>
-            ON AIR
-          </div>
-        )}
-
-        {/* hover 시 안내 문구 */}
-        <div className={styles.overlay}>
-          <span className={styles.enterText}>
-            {isOnAir ? "강의실 입장" : "강의 시간 아님"}
+        <div className={styles.hoverOverlay}>
+          <span className={styles.overlayText}>
+            강의 상세 보기
           </span>
         </div>
       </div>
@@ -60,10 +47,13 @@ export default function LectureCard({
 
       <div className={styles.buttonBox}>
         <button
-          className={styles.detailButton}
-          onClick={onClick}
+          className={`${styles.detailButton} ${
+            !isOnAir ? styles.disabledButton : ""
+          }`}
+          disabled={!isOnAir}
+          onClick={() => handleJoinClass(classId)}
         >
-          강의 상세 페이지 이동
+          강의실 입장
         </button>
       </div>
     </div>

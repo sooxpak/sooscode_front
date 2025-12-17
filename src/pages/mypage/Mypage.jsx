@@ -6,13 +6,11 @@ import defaultImg from "@/assets/img1.jpg";
 import { useUser } from "../../hooks/useUser";
 import { useMyClassesInfinite } from "../../features/mypage/services/mypageService";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function Mypage() {
   const { user } = useUser();
-  console.log(user);
   const navigate = useNavigate();
-  console.log(user);
 
   const {
     data,
@@ -23,31 +21,35 @@ export default function Mypage() {
     isFetchingNextPage,
   } = useMyClassesInfinite();
 
-  const loadMoreRef = useRef(null);
-
+  /* ===============================
+     window 기준 강제 무한스크롤
+  =============================== */
   useEffect(() => {
-    console.log("🔍 infinite data:", data);
-    console.log("🔍 pages:", data?.pages);
-    if (!loadMoreRef.current || !hasNextPage) return;
+    const onScroll = () => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const clientHeight = window.innerHeight;
+      const scrollHeight = document.documentElement.scrollHeight;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 1.0 }
-    );
+      const isBottom =
+        scrollTop + clientHeight >= scrollHeight - 5; // 여유값
 
-    observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage]);
+      if (isBottom && hasNextPage && !isFetchingNextPage) {
+        console.log("🔥 window 맨 아래 도달 → fetchNextPage()");
+        fetchNextPage();
+      }
+    };
 
-  // onair 상태감지 (기존 그대로)
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  /* ===============================
+     ON AIR 상태 계산
+  =============================== */
   const isOnAirNow = (item) => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
     const startDate = new Date(item.startDate);
     const endDate = new Date(item.endDate);
 
@@ -70,9 +72,7 @@ export default function Mypage() {
   if (!user) return <div>Loading...</div>;
 
   const classes =
-  data?.pages.flatMap(
-    (page) => page?.content ?? []
-  ) ?? [];
+    data?.pages.flatMap((page) => page?.content ?? []) ?? [];
 
   return (
     <div>
@@ -104,9 +104,6 @@ export default function Mypage() {
             />
           ))}
         </div>
-
-        {/* 🔻 무한스크롤 트리거 */}
-        <div ref={loadMoreRef} style={{ height: 1 }} />
 
         {isFetchingNextPage && <div>불러오는 중...</div>}
       </div>

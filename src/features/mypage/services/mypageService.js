@@ -44,7 +44,7 @@ export const useMyClassesInfinite = () => {
     queryFn: ({ pageParam }) =>
       getMyClasses({ pageParam }),
 
-    // ✅ Page 기준으로 판단
+    // Page 기준으로 판단
     getNextPageParam: (lastPage) => {
       if (!lastPage || lastPage.last) return undefined;
       return lastPage.number + 1;

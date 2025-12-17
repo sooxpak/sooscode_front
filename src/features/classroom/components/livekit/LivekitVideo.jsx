@@ -10,7 +10,7 @@ import ClassroomStage from "./ClassroomStage";
 export default function LivekitVideo() {
   const { classId } = useClassroom();
   const [token, setToken] = useState(null);
-  const serverUrl = "wss://sooscode-alv59aqj.livekit.cloud";
+  const serverUrl = "wss://sooscode-7wzcousb.livekit.cloud";
   const { user } = useUser();
   // INSTRUCTOR 인식
   const isTeacher = user?.role === "INSTRUCTOR";
