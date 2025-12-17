@@ -44,6 +44,7 @@ const useSocket = (classroomId, isInstructor = false) => {
             onStompError: (frame) => {
                 setError(frame.headers['message'] || '연결 오류');
                 setConnected(false);
+
             },
 
             // WebSocket 에러
