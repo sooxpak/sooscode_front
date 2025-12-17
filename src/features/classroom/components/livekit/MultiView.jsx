@@ -48,7 +48,10 @@ const { rows, cols } = getGridLayout(participantCount);
     <div
       key={p.identity}
       className={styles.gridItem}
-      onClick={() => onSelectParticipant(p.identity)}
+      onClick={() => {
+  if (!p.trackRef) return;      // 트랙 없으면 무시
+  onSelectParticipant(p.trackRef);
+}}
     >
       <div className={styles.videoFrame}>
         {shouldRenderVideo && (

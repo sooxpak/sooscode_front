@@ -35,18 +35,12 @@ export default function SnapshotPanel() {
   );
   const refreshKey = useSnapshotStore((s) => s.refreshKey);
 
-  /**
-   * 🔹 필터 / refresh 변경 시 초기화
-   */
   useEffect(() => {
     setSnapshots([]);
     setPage(0);
     setHasMore(true);
   }, [classId, startDate, endDate, language, refreshKey]);
 
-  /**
-   * 🔹 페이지 로딩 (무한스크롤 핵심)
-   */
   useEffect(() => {
     if (!classId || !startDate || !endDate) return;
     if (!hasMore) return;
@@ -87,9 +81,6 @@ export default function SnapshotPanel() {
     };
   }, [classId, startDate, endDate, language, refreshKey, page, hasMore]);
 
-  /**
-   * 🔹 IntersectionObserver
-   */
   useEffect(() => {
     if (!hasMore || loading) return;
 
@@ -107,9 +98,6 @@ export default function SnapshotPanel() {
     return () => observer.disconnect();
   }, [hasMore, loading]);
 
-  /**
-   * 🔹 스냅샷 클릭
-   */
   const handleClick = async (snapshot) => {
     try {
       const fullSnapshot = await getSnapshotDetail({
@@ -124,9 +112,6 @@ export default function SnapshotPanel() {
     }
   };
 
-  /**
-   * 🔹 스냅샷 삭제
-   */
   const handleDeleteSnapshot = async (snapshotId) => {
     await deleteSnapshot({ classId, snapshotId });
 

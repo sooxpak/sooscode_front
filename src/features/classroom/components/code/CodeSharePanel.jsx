@@ -57,11 +57,9 @@ const CodeSharePanel = ({ classId, isInstructor = false }) => {
     // 코드 수신 구독
     useEffect(() => {
         if (!socket || !socket.connected) {
-            console.log('[CodeSharePanel] 소켓 미연결 또는 classId 없음');
             return;
         }
 
-        console.log(`[CodeSharePanel] 구독 시작: ${subscribeTopic}`);
 
         const subscription = socket.subscribe(subscribeTopic, (data) => {
             console.log('[CodeSharePanel] 수신 데이터:', {
@@ -76,18 +74,15 @@ const CodeSharePanel = ({ classId, isInstructor = false }) => {
             if (isInstructor) {
                 // 선택된 학생이 없으면 모든 코드 무시
                 if (!selectedStudent) {
-                    console.log('[CodeSharePanel-Instructor] 학생 선택 안 됨 - 무시');
                     return;
                 }
 
                 // 선택된 학생의 코드가 아니면 무시
                 if (data.userEmail !== selectedStudent.userEmail &&
                     data.userId !== selectedStudent.userId) {
-                    console.log('[CodeSharePanel-Instructor] 선택되지 않은 학생 코드 무시:', data.userId);
                     return;
                 }
 
-                console.log('[CodeSharePanel-Instructor] 선택된 학생 코드 수신:', selectedStudent.username);
             }
 
             // 학생 CodeSharePanel 필터링
@@ -101,7 +96,6 @@ const CodeSharePanel = ({ classId, isInstructor = false }) => {
 
                 // 1. 자기가 보낸 메시지 무시
                 if (data.userEmail === user?.email) {
-                    console.log('[CodeSharePanel-Student] 자기가 보낸 메시지 무시');
                     return;
                 }
 

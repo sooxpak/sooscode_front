@@ -2,8 +2,8 @@ import styles from './ClassSidebar.module.css';
 import { useState } from "react";
 import { useSidebar } from "@/features/classroom/hooks/class/useSidebar.js";
 import { useParticipants } from "@/features/classroom/hooks/class/useParticipants.js";
-import { useSelectedStudent } from "@/features/classroom/hooks/class/useSelectedStudent.js"; // ✅ 추가
-import { useUser } from "@/hooks/useUser.js"; // ✅ 추가
+import { useSelectedStudent } from "@/features/classroom/hooks/class/useSelectedStudent.js"; // 추가
+import { useUser } from "@/hooks/useUser.js"; // 추가
 import { useParams } from "react-router-dom";
 import { decodeNumber } from "@/utils/urlEncoder";
 import ChatPanel from "@/features/classroom/components/chat/ChatPanel.jsx";

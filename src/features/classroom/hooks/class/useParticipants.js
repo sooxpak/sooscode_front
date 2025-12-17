@@ -15,7 +15,6 @@ export const useParticipants = (classId) => {
 
         // 참가자 목록 구독
         const topic = `/topic/class/${classId}/participants`;
-        console.log('[useParticipants] 구독 시작:', topic);
 
         const subscription = socket.subscribe(topic, (data) => {
             console.log('[useParticipants] 참가자 목록 수신:', data);
@@ -28,7 +27,6 @@ export const useParticipants = (classId) => {
         // 초기 참가자 목록 요청
         const requestTopic = `/app/class/${classId}/participants`;
         socket.publish(requestTopic, {});
-        console.log('[useParticipants] 참가자 목록 요청:', requestTopic);
 
         return () => {
             if (subscription) {

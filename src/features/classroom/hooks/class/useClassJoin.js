@@ -17,7 +17,7 @@ export const useClassJoin = (classId) => {
             return;
         }
 
-        // ✅ 채팅 채널 구독 = 클래스 입장
+        // 채팅 채널 구독 = 클래스 입장
         const chatTopic = `/topic/class/${classId}/chat`;
         console.log('[useClassJoin] 클래스 입장 (채팅 채널 구독):', chatTopic);
 

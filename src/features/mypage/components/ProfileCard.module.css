@@ -1,8 +1,8 @@
 .profileContainer {
   width: 100%;
   max-width: 1200px;
-  background: #2e2f33;
-  border-radius: 12px;
+  background: var(--color-gray-800);
+  border-radius: var(--radius-md);
   margin: 0 auto;
   overflow: hidden;
   position: relative;
@@ -12,62 +12,70 @@
 .profileBackground {
   width: 100%;
   height: 140px;
-  background: linear-gradient(90deg, #6f7dfb, var(--color-primary-300: #93c5fd));
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-100),
+    var(--color-primary-300)
+  );
 }
 
 /* ===== 프로필 이미지 ===== */
 .profileImage {
   width: 110px;
   height: 110px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   object-fit: cover;
   position: absolute;
   top: 70px;
   left: 30px;
-  border: 4px solid #2e2f33;
+  border: 4px solid var(--color-gray-800);
 }
 
 /* ===== 정보 섹션 ===== */
 .profileContentSection {
   padding: 70px 30px 30px;
-  background:var(--color-gray-300);
+  background: var(--color-gray-700);
 }
 
 .label {
   font-size: 13px;
-  color: #a9a9a9;
+  color: var(--color-text-tertiary);
   margin-bottom: 6px;
 }
 
 .value {
   font-size: 18px;
-  color: white;
+  color: var(--color-text-inverse);
   margin-bottom: 20px;
 }
 
 .nameContainer,
 .emailContainer {
-  flex-direction:row;
+  flex-direction: row;
   margin-bottom: 20px;
 }
 
-.nameContent{
-  display:flex;
-  flex-direction:row;
-  align-item:center;
-  gap:10px;
+.nameContent {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
 
-.editButton{
-  margin-top:3px;
-  cursor:pointer;
+.editButton {
+  margin-top: 3px;
+  cursor: pointer;
+  color: var(--color-primary-400);
+  transition: color var(--transition-fast);
+}
+
+.editButton:hover {
+  color: var(--color-primary-500);
 }
 
 @media (max-width: 480px) {
   .profileContainer {
-    width: calc(100% - 32px); /* 좌우 여백 16px씩 확보 */
+    width: calc(100% - 32px);
     margin: 16px auto 0;
   }
 }
-
-
