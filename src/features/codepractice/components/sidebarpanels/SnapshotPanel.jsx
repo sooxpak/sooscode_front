@@ -1,7 +1,7 @@
 import DatePicker from 'react-datepicker';
 import styles from './SnapshotPanel.module.css';
 import { useEffect, useState, useRef } from 'react';
-import SnapshotItem from './snapshot/snapshotItem';
+import SnapshotItem from './snapshot/SnapshotItem';
 import { useSnapshotStore } from '../../store/useSnapshotStore';
 import { usePracticeStore } from '../../store/usePracticeStore';
 import {
