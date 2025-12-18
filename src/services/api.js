@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://sooscode-api.kro.kr";
+const BASE_URL = "http:s//sooscode.kro.kr";
 
 export const SOCKET_URL = `${BASE_URL}/ws`;
 

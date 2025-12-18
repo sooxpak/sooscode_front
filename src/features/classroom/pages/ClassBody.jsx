@@ -36,7 +36,7 @@ const ClassBody = () => {
             <div className={styles.page}>
                 <div className={styles.content}>
                     <div className={styles.inner}>
-                        {/*<LivekitVideo />*/}
+                        <LivekitVideo />
                     </div>
                 </div>
             </div>

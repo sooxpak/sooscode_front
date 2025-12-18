@@ -16,11 +16,42 @@ export default function ClassroomStage({ isTeacher }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMultiView, setIsMultiView] = useState(false);
 const [focusedTrack, setFocusedTrack] = useState(null);
+const isTeacherParticipant = (p) => {
+  const role = JSON.parse(p.metadata || "{}").role;
+  return role === "TEACHER" || role === "INSTRUCTOR";
+};
 
   const room = useRoomContext();
   if (!room) {
     return <div className={styles.stage}>LiveKit 연결중...</div>;
   }
+
+  useEffect(() => {
+  if (!room) return;
+
+  console.group("🧪 LiveKit METADATA CHECK");
+
+  console.log("🧑‍💻 LOCAL", {
+    identity: room.localParticipant.identity,
+    metadata: room.localParticipant.metadata,
+    parsed: room.localParticipant.metadata
+      ? JSON.parse(room.localParticipant.metadata)
+      : null,
+  });
+
+  room.remoteParticipants.forEach((p) => {
+    console.log("👤 REMOTE", {
+      identity: p.identity,
+      metadata: p.metadata,
+      parsed: p.metadata ? JSON.parse(p.metadata) : null,
+    });
+  });
+
+  console.groupEnd();
+}, [room]);
+
+
+
 
   /* ===============================
      Track 수집
@@ -90,6 +121,8 @@ if (isScreenSharing) {
     };
   });
 
+  
+
   /* ===============================
      Local Track
   =============================== */
@@ -132,7 +165,8 @@ if (isScreenSharing) {
   const teacherScreenShareTracks = tracks.filter(
   (t) =>
     t.publication?.source === Track.Source.ScreenShare &&
-    !t.participant?.isLocal
+    !t.participant?.isLocal &&
+    isTeacherParticipant(t.participant)
 );
 
 
@@ -141,6 +175,7 @@ if (isScreenSharing) {
   (t) =>
     t.publication?.source === Track.Source.Camera &&
     !t.participant?.isLocal &&
+    isTeacherParticipant(t.participant) && //추가
     !t.publication.isMuted &&
     !!t.publication.track
 );
@@ -201,23 +236,20 @@ if (isScreenSharing) {
   // }, [tracks]);
 
   useEffect(() => {
-  if (!room) return;
+  tracks.forEach((t) => {
+    console.log("🎯 TRACK CHECK", {
+      identity: t.participant?.identity,
+      role: t.participant?.metadata
+        ? JSON.parse(t.participant.metadata).role
+        : null,
+      source: t.publication?.source,
+      isLocal: t.participant?.isLocal,
+      muted: t.publication?.isMuted,
+      hasTrack: !!t.publication?.track,
+    });
+  });
+}, [tracks]);
 
-  console.log(
-    "👥 remoteParticipants:ㅇㅇ",
-    Array.from(room.remoteParticipants.values()).map(p => ({
-      identity: p.identity,
-      isLocal: p.isLocal,
-      isCameraEnabled: p.isCameraEnabled,
-      isScreenShareEnabled: p.isScreenShareEnabled,
-      tracks: Array.from(p.tracks.values()).map(t => ({
-        source: t.source,
-        muted: t.isMuted,
-        subscribed: t.isSubscribed,
-      })),
-    }))
-  );
-}, [room]);
 
 
 
