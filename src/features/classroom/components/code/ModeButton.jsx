@@ -1,11 +1,11 @@
 import styles from "@/features/classroom/components/code/TopButtonBar.module.css";
-import { CLASS_MODES, useClassMode } from "@/features/classroom/contexts/ClassModeContext.jsx";
+import { useSocketContext } from "@/features/classroom/contexts/SocketContext.jsx";
+import { CLASS_MODES } from "@/features/classroom/constants/classModes.js";
 
 const ModeButton = () => {
-    const { mode, changeMode } = useClassMode();
+    const { classMode, changeMode } = useSocketContext();
 
     const handleModeChange = (newMode) => {
-
         changeMode(newMode);
     };
 
@@ -48,7 +48,7 @@ const ModeButton = () => {
             {Object.values(CLASS_MODES).map((modeType) => (
                 <button
                     key={modeType}
-                    className={`${styles.button} ${mode === modeType ? styles.active : ""}`}
+                    className={`${styles.button} ${classMode === modeType ? styles.active : ""}`}
                     onClick={() => handleModeChange(modeType)}
                 >
                     <span className={styles.icon}>{getModeIcon(modeType)}</span>

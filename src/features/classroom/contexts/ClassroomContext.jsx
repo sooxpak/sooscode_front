@@ -1,42 +1,30 @@
-import { createContext, useContext } from 'react';
-import { useClassroomAccess } from '@/features/classroom/hooks/class/useClassroomAccess';
+import { createContext, useContext, useMemo } from 'react';
+import { useUser } from '@/hooks/useUser';
 
+/**
+ * 클래스룸 기본 정보 Context
+ * - classId
+ * - 유저 정보 (userId, username, isInstructor)
+ */
 const ClassroomContext = createContext(null);
 
 export const ClassroomProvider = ({ classId, children }) => {
-    const { classroomData, isLoading, error, hasAccess } = useClassroomAccess(classId);
+    const { user } = useUser();
 
-    const value = {
-        classId,
-        classroomData,
-        isLoading,
-        error,
-        hasAccess,
-        // 편의 속성들
-        isInstructor: classroomData?.isInstructor ?? false,
-        className: classroomData?.title ?? '',
-        status: classroomData?.status ?? 'UPCOMING',
-        mode: classroomData?.mode ?? 'READ',
-        totalParticipantCount: classroomData?.totalParticipantCount ?? 0,
-    };
+    const value = useMemo(() => {
+        if (!user) return null;
 
-    // 로딩 중이면 로딩 화면 표시
-    if (isLoading) {
-        return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh'
-            }}>
-                <div>클래스 정보를 불러오는 중...</div>
-            </div>
-        );
-    }
+        return {
+            classId,
+            userId: user.userId,
+            username: user.name,
+            isInstructor: user.role === 'INSTRUCTOR',
+        };
+    }, [classId, user]);
 
-    // 접근 권한이 없거나 에러가 있으면 children을 렌더하지 않음
-    if (!hasAccess || error) {
-        return null;
+    // 유저 정보 로딩 중
+    if (!value) {
+        return null; // 또는 로딩 컴포넌트
     }
 
     return (
@@ -46,10 +34,12 @@ export const ClassroomProvider = ({ classId, children }) => {
     );
 };
 
-export const useClassroom = () => {
+export const useClassroomContext = () => {
     const context = useContext(ClassroomContext);
     if (!context) {
         throw new Error('useClassroom must be used within ClassroomProvider');
     }
     return context;
 };
+
+export default ClassroomContext;

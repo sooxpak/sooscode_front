@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { useCallback } from "react";
 import { snapshotService } from "@/features/classroom/services/snapshotService.js";
-import { useCode } from "@/features/classroom/hooks/code/useCode.js";
 import { useToast } from "@/hooks/useToast.js";
-import { useClassroom } from "@/features/classroom/contexts/ClassroomContext.jsx";
+import { useClassroomContext } from "@/features/classroom/contexts/ClassroomContext.jsx";
 
 /**
  * 스냅샷 목록 상태 스토어
@@ -24,15 +23,15 @@ const snapshotListStore = create((set) => ({
      */
     mode: 'recent',
 
-    //스냅샷 목록 데이터 설정
+    // 스냅샷 목록 데이터 설정
     setSnapshots: (snapshots) => set({ snapshots }),
-    //전체 페이지 수 설정
+    // 전체 페이지 수 설정
     setTotalPages: (total) => set({ totalPages: total }),
-    //현재 페이지 수 설정
+    // 현재 페이지 수 설정
     setPage: (page) => set({ page }),
-    //목록 로딩 상태 결정
+    // 목록 로딩 상태 결정
     setLoadingList: (loading) => set({ loadingList: loading }),
-    //검색 필터 병합 설정
+    // 검색 필터 병합 설정
     setFilters: (newFilters) => set((state) => ({
         filters: { ...state.filters, ...newFilters }
     })),
@@ -55,20 +54,22 @@ const snapshotListStore = create((set) => ({
             mode: 'recent'
         }),
 }));
+
 /**
- * 스냅샷 목록 비지니스 훅
+ * 스냅샷 목록 비즈니스 훅
  * 역할:
- * -스냅샷 목록 조회/검색/페이지 이동/복원 로직 캡슐화
- * -UI 컴포넌트는 이 훅을 통해 상태, 액션 소비
- * */
-export const useSnapshotList = () => {
-    const { classId } = useClassroom();
-    const { setCode } = useCode();
+ * - 스냅샷 목록 조회/검색/페이지 이동/복원 로직 캡슐화
+ * - UI 컴포넌트는 이 훅을 통해 상태, 액션 소비
+ *
+ * @param {Function} onRestore - 스냅샷 복원 시 호출될 콜백 (code를 받아서 에디터에 설정)
+ */
+export const useSnapshotList = (onRestore) => {
+    const { classId } = useClassroomContext();
     const toast = useToast();
 
     /**
      * 전역 스냅샷 목록 상태 구독
-     * */
+     */
     const {
         snapshots,
         loadingList,
@@ -85,11 +86,12 @@ export const useSnapshotList = () => {
         resetFilters,
         reset
     } = snapshotListStore();
+
     /**
      * 최근 스냅샷 목록 조회
-     * 샤용시점:
-     * -최초 진입
-     * -최근 보기 전환 시
+     * 사용시점:
+     * - 최초 진입
+     * - 최근 보기 전환 시
      */
     const fetchRecentSnapshots = useCallback(async () => {
         if (!classId) return;
@@ -118,9 +120,10 @@ export const useSnapshotList = () => {
             setLoadingList(false);
         }
     }, [classId, setSnapshots, setTotalPages, setPage, setLoadingList, setMode]);
+
     /**
      * 스냅샷 목록 조회 & 검색
-     * */
+     */
     const fetchSnapshots = useCallback(async (targetPage = page, newFilters = undefined) => {
         if (!classId) return;
 
@@ -131,7 +134,7 @@ export const useSnapshotList = () => {
             const size = 9;
             /**
              * 새로운 필터 전달 시 기존필터 교체, 그렇지 않으면 유지
-             * */
+             */
             const activeFilters = newFilters !== undefined ? newFilters : filters;
 
             if (newFilters !== undefined) {
@@ -139,7 +142,7 @@ export const useSnapshotList = () => {
             }
             /**
              * 빈 필터 값 제거
-             * */
+             */
             const cleanFilters = Object.fromEntries(
                 // eslint-disable-next-line no-unused-vars
                 Object.entries(activeFilters).filter(([_, v]) => v != null && v !== '')
@@ -172,31 +175,39 @@ export const useSnapshotList = () => {
 
         fetchSnapshots(newPage);
     };
+
     /**
      * 검색 처리
      * 동작:
-     * -페이지를 0 초기화
-     * -전달 받은 검색 조건, 조회 실행
-     * */
+     * - 페이지를 0 초기화
+     * - 전달 받은 검색 조건, 조회 실행
+     */
     const handleSearch = (searchFilters) => {
         setPage(0);
         fetchSnapshots(0, searchFilters);
     };
+
     /**
      * 스냅샷 코드 복원 처리
-     * -스냅샷 저장되어있는코드 에디터 반영
-     * */
-    const handleRestoreSnapshot = (snapshot) => {
+     * - 스냅샷 저장되어있는 코드 에디터 반영
+     */
+    const handleRestoreSnapshot = useCallback((snapshot) => {
         if (!snapshot?.content) {
             toast.error("복원할 코드가 없습니다.");
             return;
         }
-        setCode(snapshot.content);
-        toast.success(`'${snapshot.title}' 스냅샷을 불러왔습니다.`);
-    };
+
+        // onRestore 콜백이 제공되었으면 호출
+        if (onRestore) {
+            onRestore(snapshot.content);
+            toast.success(`'${snapshot.title}' 스냅샷을 불러왔습니다.`);
+        } else {
+            toast.error("코드 복원 기능이 설정되지 않았습니다.");
+        }
+    }, [onRestore, toast]);
 
     /**
-     * [신규] 스냅샷 삭제 처리
+     * 스냅샷 삭제 처리
      * - API 호출 후 현재 모드(최근/전체)에 맞춰 목록 갱신
      */
     const handleDeleteSnapshot = useCallback(async (snapshotId) => {
@@ -219,7 +230,7 @@ export const useSnapshotList = () => {
         } finally {
             setLoadingList(false);
         }
-    }, [classId, mode, page, fetchRecentSnapshots, fetchSnapshots, setLoadingList]);
+    }, [classId, mode, page, fetchRecentSnapshots, fetchSnapshots, setLoadingList, toast]);
 
     return {
         snapshots,

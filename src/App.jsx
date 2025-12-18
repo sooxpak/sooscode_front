@@ -5,26 +5,17 @@ import '@/styles/reset.css';
 import '@/styles/variables.css';
 import '@/styles/global.css';
 import {useDarkMode} from "@/hooks/useDarkMode.js";
-import {useEffect} from "react";
-import {useUser} from "@/hooks/useUser.js";
-import {useLoading} from "@/hooks/useLoading.js";
+import AuthGate from "@/routes/AuthGate.jsx";
 
 export default function App() {
     useDarkMode();
-    const { initAuth } = useUser();
-    const { showLoading, hideLoading } = useLoading();
-    useEffect(() => {
-        const init = async () => {
-            showLoading();
-            await initAuth();
-            hideLoading();
-        };
-        init();
-    }, []);
+
 
     return <>
         <GlobalLoading />
         <Toast />
-        <AppRoute />
+        <AuthGate>
+            <AppRoute />
+        </AuthGate>
     </>
 }

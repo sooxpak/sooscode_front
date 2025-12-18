@@ -1,87 +1,121 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import {useCallback, useRef, useState, useEffect} from "react";
+import chatApi from "@/features/classroom/services/chatApi.js";
 
 /**
- * typing 구독 + sendTyping/stopTyping
- * - 다른 사람 typing만 보여줌
- * - typingUsers 증가했고 내가 바닥 보고 있으면 자동 스크롤
+ * 타이핑 상태 훅
+ * - 타이핑 상태 전송
+ * - 다른 유저 타이핑 상태 수신
+ *
+ * @param {Object} options
+ * @param {number} options.classId - 클래스 ID
+ * @param {boolean} options.isConnected - WebSocket 연결 상태
+ * @param {number} options.timeout - 타이핑 종료 타임아웃 (ms)
  */
-export const useChatTyping = ({
-                                  connected,
-                                  subscribe,
-                                  publish,
-                                  classId,
-                                  myEmail,
-                                  isAtBottomRef,
-                                  bottomRef,
-                              }) => {
-    const [typingUsers, setTypingUsers] = useState([]); // [{userId, name}]
-    const typingTimerRef = useRef(null);
-    const lastSentRef = useRef(0);
+export const useTyping = ({
+                              classId,
+                              isConnected = false,
+                              timeout = 1000,
+                          } = {}) => {
+    const [typingUsers, setTypingUsers] = useState([]);
 
-    // typing 수신 구독
-    useEffect(() => {
-        if (!connected) return;
+    const typingTimeoutRef = useRef(null);
+    const isTypingRef = useRef(false);
+    const userTimeoutsRef = useRef({});
+    const mountedRef = useRef(true);
 
-        const sub = subscribe(`/topic/chat/${classId}/typing`, (body) => {
-            // body 형태 통일
-            const data = JSON.parse(body.body ?? body);
-            console.log(myEmail,"내이메일ㅇ", data.email, "데이타이메일")
-            // 내 typing은 표시 안 함
-            if (myEmail && data.email === myEmail) return;
-            
+    // 타이핑 상태 수신 핸들러
+    const handleTyping = useCallback((data) => {
+        if (!mountedRef.current) return;
 
-            
+        const { userId, username, typing } = data;
 
-            setTypingUsers((prev) => {
-                const exists = prev.some((u) => u.userId === data.userId);
-
-                let next = prev;
-                if (data.typing) {
-                    next = exists ? prev : [...prev, { userId: data.userId, name: data.name }];
-                } else {
-                    next = prev.filter((u) => u.userId !== data.userId);
-                }
-
-                // 늘어났고 내가 바닥이면 자동 스크롤
-                const increased = next.length > prev.length;
-                if (increased && isAtBottomRef?.current) {
-                    requestAnimationFrame(() => {
-                        bottomRef?.current?.scrollIntoView({ behavior: "smooth" });
-                    });
-                }
-
-                return next;
+        if (typing) {
+            // 타이핑 시작
+            setTypingUsers(prev => {
+                const exists = prev.some(u => u.userId === userId);
+                if (exists) return prev;
+                return [...prev, { userId, username }];
             });
-        });
 
-        return () => sub?.unsubscribe?.();
-    }, [connected, subscribe, classId, myEmail, isAtBottomRef, bottomRef]);
+            // 기존 타임아웃 클리어
+            if (userTimeoutsRef.current[userId]) {
+                clearTimeout(userTimeoutsRef.current[userId]);
+            }
 
-    const sendTyping = useCallback(() => {
-        if (!connected) return;
+            // 새 타임아웃 설정 (일정 시간 후 자동 제거)
+            userTimeoutsRef.current[userId] = setTimeout(() => {
+                if (mountedRef.current) {
+                    setTypingUsers(prev => prev.filter(u => u.userId !== userId));
+                }
+            }, 3000);
+        } else {
+            // 타이핑 종료
+            setTypingUsers(prev => prev.filter(u => u.userId !== userId));
 
-        const now = Date.now();
-        if (now - lastSentRef.current < 300) return; // 레이트 제한
-        lastSentRef.current = now;
+            if (userTimeoutsRef.current[userId]) {
+                clearTimeout(userTimeoutsRef.current[userId]);
+                delete userTimeoutsRef.current[userId];
+            }
+        }
+    }, []);
 
-        publish("/app/chat.typing", { classId });
+    // 내 타이핑 시작
+    const onKeyDown = useCallback(() => {
+        if (!classId || !isConnected) return;
 
-        clearTimeout(typingTimerRef.current);
-        typingTimerRef.current = setTimeout(() => {
-            publish("/app/chat.stopTyping", { classId });
-        }, 1500);
-    }, [connected, publish, classId]);
+        if (!isTypingRef.current) {
+            isTypingRef.current = true;
+            chatApi.startTyping(classId);
+        }
 
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            if (isTypingRef.current) {
+                isTypingRef.current = false;
+                chatApi.stopTyping(classId);
+            }
+            typingTimeoutRef.current = null;
+        }, timeout);
+    }, [classId, isConnected, timeout]);
+
+    // 타이핑 강제 종료
     const stopTyping = useCallback(() => {
-        if (!connected) return;
-        clearTimeout(typingTimerRef.current);
-        publish("/app/chat.stopTyping", { classId });
-    }, [connected, publish, classId]);
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = null;
+        }
+
+        if (isTypingRef.current && classId) {
+            isTypingRef.current = false;
+            chatApi.stopTyping(classId);
+        }
+    }, [classId]);
+
+    // 구독 및 cleanup
+    useEffect(() => {
+        if (!classId || !isConnected) return;
+
+        mountedRef.current = true;
+
+        chatApi.subscribeTyping(classId, handleTyping);
+
+        return () => {
+            mountedRef.current = false;
+            chatApi.unsubscribeTyping(classId);
+            stopTyping();
+
+            // 모든 유저 타임아웃 클리어
+            Object.values(userTimeoutsRef.current).forEach(clearTimeout);
+            userTimeoutsRef.current = {};
+        };
+    }, [classId, isConnected, handleTyping, stopTyping]);
 
     return {
         typingUsers,
-        setTypingUsers,
-        sendTyping,
+        onKeyDown,
         stopTyping,
     };
 };

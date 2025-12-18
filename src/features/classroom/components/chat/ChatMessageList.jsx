@@ -39,8 +39,9 @@ const formatTimeOnly = (iso) => {
 
     return `${ampm} ${hours}:${minutes}`;
 };
-// email 기준 (확정)
-const getSenderEmail = (m) => m?.email ?? "";
+
+// userId 기준으로 변경 (email → userId)
+const getSenderUserId = (m) => m?.userId ?? null;
 
 // 분 단위 비교
 const isSameMinute = (a, b) => {
@@ -55,23 +56,23 @@ const shouldShowTime = (messages, idx) => {
     const next = messages[idx + 1];
     if (!next) return true;
 
-    const curCreated = cur?.created_at || cur?.createdAt || "";
-    const nextCreated = next?.created_at || next?.createdAt || "";
+    const curCreated = cur?.createdAt || "";
+    const nextCreated = next?.createdAt || "";
 
     // 시스템 메시지는 항상 표시
-    const isSystem = cur?.type === "ENTER" || cur?.type === "EXIT";
+    const isSystem = cur?.type === "SYSTEM";
     if (isSystem) return true;
 
-    const sameEmail = getSenderEmail(cur) === getSenderEmail(next);
+    const sameUser = getSenderUserId(cur) === getSenderUserId(next);
     const sameMinute = isSameMinute(curCreated, nextCreated);
     const sameDate = getDateKey(curCreated) === getDateKey(nextCreated);
 
-    return !(sameEmail && sameMinute && sameDate);
+    return !(sameUser && sameMinute && sameDate);
 }
 
 export default function ChatMessageList({
                                             messages,
-                                            myEmail,
+                                            myUserId,  // myEmail → myUserId
                                             messagesRef,
                                             bottomRef,
                                             handleScroll,
@@ -83,6 +84,7 @@ export default function ChatMessageList({
                                             handleDelete,
                                             handleReply,
                                             scrollToMessage,
+                                            fetchReactionUsers,
                                             typingUsers
                                         }) {
     return (
@@ -93,17 +95,16 @@ export default function ChatMessageList({
         >
             {Array.isArray(messages) &&
                 messages.map((msg, idx) => {
-                    // createdAt / created_at 둘 다 대응
-                    const created = msg.created_at || msg.createdAt || null;
+                    // createdAt 사용 (백엔드 DTO 필드명)
+                    const created = msg.createdAt || null;
 
-                    // 시스템 메시지 판별
-                    const isSystem =
-                        msg.type === "ENTER" || msg.type === "EXIT";
+                    // 시스템 메시지 판별 (SYSTEM 타입으로 수정)
+                    const isSystem = msg.type === "SYSTEM";
 
                     // 이전 메시지와 날짜 비교 → 날짜 구분선 렌더링 여부
                     const prevMsg = messages[idx - 1];
                     const prevDateKey = prevMsg
-                        ? getDateKey(prevMsg.created_at || prevMsg.createdAt)
+                        ? getDateKey(prevMsg.createdAt)
                         : null;
                     const currentDateKey = getDateKey(created);
                     const isNewDate = idx === 0 || prevDateKey !== currentDateKey;
@@ -123,7 +124,7 @@ export default function ChatMessageList({
                             {/* 실제 메시지(시스템/일반) */}
                             <ChatMessageItem
                                 msg={msg}
-                                myEmail={myEmail}
+                                myUserId={myUserId}  // myEmail → myUserId
                                 created={created}
                                 isSystem={isSystem}
                                 formatTimeOnly={formatTimeOnly}
@@ -135,23 +136,25 @@ export default function ChatMessageList({
                                 handleDelete={handleDelete}
                                 handleReply={handleReply}
                                 scrollToMessage={scrollToMessage}
+                                fetchReactionUsers={fetchReactionUsers}
                                 showTime={showTime}
                             />
                         </React.Fragment>
                     );
                 })}
-            {/* 자동 스크롤용 anchor */}
+            {/* 타이핑 인디케이터 */}
             {typingUsers?.length > 0 && (
                 <div className="chat-typing-indicator">
                     <span className="chat-typing-text">
                     {typingUsers.length === 1
-                        ? `${typingUsers[0].name} 입력 중…`
-                        : `${typingUsers[0].name} 외 ${typingUsers.length - 1}명 입력 중…`}
+                        ? `${typingUsers[0].username} 입력 중…`  // name → username
+                        : `${typingUsers[0].username} 외 ${typingUsers.length - 1}명 입력 중…`}
                     </span>
                     <ChatTypingIndicator />
                 </div>
             )}
 
+            {/* 자동 스크롤용 anchor */}
             <div ref={bottomRef} />
         </div>
     );

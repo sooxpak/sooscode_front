@@ -5,7 +5,7 @@ import SnapshotSearchFilter from "./SnapshotSearchFilter";
 import SnapshotPagination from "./SnapshotPagination";
 import { useSnapshotList } from "@/features/classroom/hooks/snapshot/useSnapshotList.js";
 import { snapshotService } from "@/features/classroom/services/snapshotService.js";
-import { useClassroom } from "@/features/classroom/contexts/ClassroomContext.jsx";
+import { useClassroomContext } from "@/features/classroom/contexts/ClassroomContext.jsx";
 import { useToast } from "@/hooks/useToast.js";
 import styles from "./SnapshotPanel.module.css";
 import SnapshotDeleteModal from "./SnapshotDeleteModal";
@@ -18,7 +18,7 @@ import SnapshotDeleteModal from "./SnapshotDeleteModal";
  * - 화면 구성 및 사용자 인터랙션 제어만 담당
  */
 const SnapshotPanel = () => {
-    const { classId } = useClassroom();
+    const { classId } = useClassroomContext();
     const toast = useToast();
     /**
      * 스냅샷 목록 관련 상태 및 액션은 전용 훅에서 제공
