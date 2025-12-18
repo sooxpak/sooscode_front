@@ -2,46 +2,30 @@ import { useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import styles from './ClassBody.module.css';
 import { useSidebar } from "@/features/classroom/hooks/class/useSidebar.js";
-import { useUser } from "@/hooks/useUser.js";
+import { useClassroomContext } from "@/features/classroom/contexts/ClassroomContext.jsx";
 import SnapshotPanel from "@/features/classroom/components/snapshot/SnapshotPanel.jsx";
 import CodePanel from "@/features/classroom/components/code/CodePanel.jsx";
 import CodeSharePanel from "@/features/classroom/components/code/CodeSharePanel.jsx";
-import { useParams } from "react-router-dom";
-import { decodeNumber } from "@/utils/urlEncoder";
-import { useSocketContext } from "@/features/classroom/contexts/SocketContext";
 import TopButtonBar from "@/features/classroom/components/code/TopButtonBar.jsx";
 import LivekitVideo from "@/features/classroom/components/livekit/LivekitVideo.jsx";
 import SnapshotSaveFeature from "@/features/classroom/components/snapshot/SnapshotSaveFeature.jsx";
-import {useClassJoin} from "@/features/classroom/hooks/class/useClassJoin.js";
 
-
+/**
+ * 클래스룸 메인 바디
+ *
+ * 구조:
+ * - 좌측: CodePanel (내 코드 작성)
+ * - 우측: CodeSharePanel (읽기 전용) / SnapshotPanel (탭)
+ */
 const ClassBody = () => {
     const { collapsed } = useSidebar();
-    const { user } = useUser();
+    const { isInstructor } = useClassroomContext();
     const [activeTab, setActiveTab] = useState('code');
-    const { encodedId } = useParams();
-    const socket = useSocketContext();
 
-    // 권한 별 다른 글씨
-    const isInstructor = user?.role === 'INSTRUCTOR';
-    const isStudent = user?.role === 'STUDENT';
-
-
-    const classId = decodeNumber(encodedId);
-
-    // 클래스 자동 입장 (채팅 채널 구독)
-    useClassJoin(classId);
-
-
-    /**
-     * 수업 모드 변경
-     */
+    // 우측 패널 라벨
     const getRightPanelLabel = () => {
-        if (isInstructor) return '학생 코드';
-        if (isStudent) return '강사 코드';
-        return '학생 코드';
+        return isInstructor ? '학생 코드' : '강사 코드';
     };
-
 
     return (
         <div
@@ -52,7 +36,7 @@ const ClassBody = () => {
             <div className={styles.page}>
                 <div className={styles.content}>
                     <div className={styles.inner}>
-                        <LivekitVideo />
+                        {/*<LivekitVideo />*/}
                     </div>
                 </div>
             </div>
@@ -61,7 +45,7 @@ const ClassBody = () => {
             <div className={styles.page}>
                 <div className={styles.content}>
                     <PanelGroup direction="horizontal">
-                        {/* 왼쪽 패널 */}
+                        {/* 왼쪽 패널 - 내 코드 */}
                         <Panel defaultSize={50} minSize={20} maxSize={80}>
                             <div className={`${styles.inner} ${styles.left}`}>
                                 <div className={styles.tabContainer}>
@@ -73,7 +57,7 @@ const ClassBody = () => {
                                         </div>
                                     )}
                                 </div>
-                                <CodePanel classId={classId} isInstructor={isInstructor} />
+                                <CodePanel />
                             </div>
                         </Panel>
 
@@ -82,7 +66,7 @@ const ClassBody = () => {
                             <div className={styles.resizerInner} />
                         </PanelResizeHandle>
 
-                        {/* 오른쪽 패널 */}
+                        {/* 오른쪽 패널 - 읽기 전용 코드 / 스냅샷 */}
                         <Panel defaultSize={50} minSize={20} maxSize={80}>
                             <div className={`${styles.inner} ${styles.right}`}>
                                 <div className={styles.tabs}>
@@ -103,7 +87,7 @@ const ClassBody = () => {
                                     className={styles.panel}
                                     style={{ display: activeTab === 'code' ? 'block' : 'none' }}
                                 >
-                                    <CodeSharePanel classId={classId} isInstructor={isInstructor} />
+                                    <CodeSharePanel />
                                 </div>
                                 <div
                                     className={styles.panel}

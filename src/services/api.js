@@ -1,7 +1,6 @@
 import axios from "axios";
 
-//const BASE_URL = "https://sooscode-api.kro.kr";
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://sooscode-api.kro.kr";
 
 export const SOCKET_URL = `${BASE_URL}/ws`;
 

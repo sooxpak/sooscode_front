@@ -1,9 +1,9 @@
 import { SettingIcon, UserIcon } from '@/common/components/utils/Icons';
-import { useClassroom } from '@/features/classroom/contexts/ClassroomContext';
+import { useClassroomContext } from '@/features/classroom/contexts/ClassroomContext';
 import styles from './ClassHeader.module.css';
 
 const ClassHeader = ({ onOpenSettings }) => {
-    const { className, status, isInstructor, totalParticipantCount } = useClassroom();
+    const { className, status, isInstructor, totalParticipantCount } = useClassroomContext();
 
     // TODO: 참가자 수는 추후 API 또는 소켓으로 실시간 업데이트 @박수빈
     const participantCount = 1;

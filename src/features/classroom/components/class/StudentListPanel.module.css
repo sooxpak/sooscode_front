@@ -1,0 +1,101 @@
+/* StudentListPanel.module.css */
+
+.participantSection {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px;
+}
+
+.participantGroup {
+    margin-bottom: 16px;
+}
+
+.groupTitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin: 0 0 8px 0;
+    padding: 0 4px;
+}
+
+.studentList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.studentItem {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #f8f9fa;
+    transition: background 0.15s ease;
+}
+
+.studentItem.instructor {
+    background: #e3f2fd;
+}
+
+.studentItem.clickable {
+    cursor: pointer;
+}
+
+.studentItem.clickable:hover {
+    background: #e9ecef;
+}
+
+.studentItem.selected {
+    background: #d1e7ff;
+    border: 1px solid #4dabf7;
+}
+
+.participantInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.participantName {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.participantStatus {
+    display: flex;
+    align-items: center;
+}
+
+.onlineBadge {
+    color: #40c057;
+    font-size: 10px;
+}
+
+.offlineBadge {
+    color: #adb5bd;
+    font-size: 10px;
+}
+
+.emptyMessage {
+    padding: 16px;
+    text-align: center;
+    color: #868e96;
+    font-size: 13px;
+}
+
+.totalCount {
+    margin-top: auto;
+    padding: 12px;
+    font-size: 12px;
+    color: #666;
+    border-top: 1px solid #e9ecef;
+}
+
+.selectedInfo {
+    margin-top: 4px;
+    font-weight: 600;
+    color: #228be6;
+}

@@ -1,50 +1,156 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import "./ChatPanel.css";
-import { useChatPanel } from "@/features/classroom/hooks/chat/useChatPanel.js"; // 경로 맞게 수정
 import ChatHeader from "./ChatHeader.jsx";
 import ChatMessageList from "./ChatMessageList.jsx";
 import ChatInput from "./ChatInput.jsx";
-import { useClassroom } from "@/features/classroom/contexts/ClassroomContext.jsx";
-import ReplyPreview from "@/features/classroom/components/chat/ReplyPreview.jsx";
+import ReplyPreview from "./ReplyPreview.jsx";
+import { useClassroomContext } from "@/features/classroom/contexts/ClassroomContext.jsx";
+import { useSocketContext } from "@/features/classroom/contexts/SocketContext.jsx";
+import { useUser } from "@/hooks/useUser.js";
+import { useChat } from "@/features/classroom/hooks/chat/useChat.js";
+import { useChatReaction } from "@/features/classroom/hooks/chat/useChatReaction.js";
+import { useTyping } from "@/features/classroom/hooks/chat/useChatTyping.js";
+import { useChatScroll } from "@/features/classroom/hooks/chat/useChatScroll.js";
 
+/**
+ * 채팅 패널
+ * - 개별 훅들을 조합하여 사용
+ */
 export default function ChatPanel() {
+    const { classId } = useClassroomContext();
+    const { isConnected } = useSocketContext();
+    const { user } = useUser();
 
-    const { classId } = useClassroom();
-    // 커스텀 훅에서 상태와 핸들러 전부 가져오기
+    // 로컬 상태
+    const [inputValue, setInputValue] = useState('');
+    const [activeMenuId, setActiveMenuId] = useState(null);
+    const [replyTarget, setReplyTarget] = useState(null);
+    const [highlightId, setHighlightId] = useState(null);
+    const [error, setError] = useState(null);
+    const [chatError, setChatError] = useState(null);
+
+    // userId로 내 메시지 판별 (email → userId로 변경)
+    const myUserId = user?.userId;
+
+    // 채팅 훅 (메시지 전송/수신/삭제)
     const {
         messages,
-        inputValue,
-        activeMenuId,
-        messageRefs,
+        isLoading,
+        sendMessage,
+        deleteMessage,
+    } = useChat({
+        classId,
+        isConnected,
+    });
+
+    // 리액션 훅
+    const {
+        reactionUsers,
+        myReactions,
+        toggleReaction,
+        getReactionUsers,
+    } = useChatReaction({
+        classId,
+        isConnected,
+    });
+
+    // 타이핑 훅
+    const {
+        typingUsers,
+        onKeyDown: sendTyping,
+        stopTyping,
+    } = useTyping({
+        classId,
+        isConnected,
+        timeout: 1000,
+    });
+
+    // 스크롤 훅
+    const {
         messagesRef,
         bottomRef,
-        highlightId,
-        connected,
-        error,
-        chatError,
-        myEmail,
-        setInputValue,
-        setActiveMenuId,
         handleScroll,
-        handleSubmit,
-        handleDelete,
-        handleReply,
-        scrollToMessage,
-        sendReaction,
-        replyTarget,
-        setReplyTarget,
-        typingUsers,
-        sendTyping,
-        stopTyping,
-        fetchReactionUsers
-    } = useChatPanel(classId);
+        messageRefs,
+    } = useChatScroll({
+        messages,
+        myUserId,  // myEmail → myUserId로 변경
+    });
 
+    // 메시지 제출
+    const handleSubmit = useCallback((e) => {
+        e?.preventDefault();
+
+        if (!inputValue.trim()) {
+            setChatError('메시지를 입력하세요.');
+            return;
+        }
+
+        try {
+            sendMessage(inputValue, replyTarget?.chatId || null);
+            setInputValue('');
+            setReplyTarget(null);
+            setChatError(null);
+            stopTyping();
+        } catch (err) {
+            setChatError('메시지 전송 실패');
+            console.error('메시지 전송 실패:', err);
+        }
+    }, [inputValue, replyTarget, sendMessage, stopTyping]);
+
+    // 메시지 삭제
+    const handleDelete = useCallback((chatId) => {
+        try {
+            deleteMessage(chatId);
+        } catch (err) {
+            setError('메시지 삭제 실패');
+            console.error('메시지 삭제 실패:', err);
+        }
+    }, [deleteMessage]);
+
+    // 답장
+    const handleReply = useCallback((message) => {
+        setReplyTarget({
+            chatId: message.chatId,
+            username: message.username,
+            content: message.content,
+        });
+    }, []);
+
+    // 특정 메시지로 스크롤
+    const scrollToMessage = useCallback((chatId) => {
+        const messageElement = messageRefs.current[chatId];
+        if (messageElement) {
+            messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // 하이라이트 효과
+            setHighlightId(chatId);
+            setTimeout(() => setHighlightId(null), 2000);
+        }
+    }, [messageRefs]);
+
+    // 리액션 전송
+    const sendReaction = useCallback((chatId) => {
+        try {
+            toggleReaction(chatId);
+        } catch (err) {
+            console.error('리액션 전송 실패:', err);
+        }
+    }, [toggleReaction]);
+
+    // 리액션 유저 목록 조회
+    const fetchReactionUsers = useCallback(async (chatId) => {
+        try {
+            return await getReactionUsers(chatId);
+        } catch (err) {
+            console.error('리액션 유저 조회 실패:', err);
+            return [];
+        }
+    }, [getReactionUsers]);
 
     return (
         <aside className="chat-sidebar">
-
             {/* 상단 헤더 */}
-            <ChatHeader classId={classId} connected={connected} />
+            <ChatHeader classId={classId} connected={isConnected} />
 
             {/* 에러 메시지 */}
             {error && <div className="chat-error">{error}</div>}
@@ -52,7 +158,7 @@ export default function ChatPanel() {
             {/* 메시지 리스트 */}
             <ChatMessageList
                 messages={messages}
-                myEmail={myEmail}
+                myUserId={myUserId}  // myEmail → myUserId
                 messagesRef={messagesRef}
                 bottomRef={bottomRef}
                 handleScroll={handleScroll}
@@ -68,12 +174,13 @@ export default function ChatPanel() {
                 typingUsers={typingUsers}
             />
 
-            {/* 입력창 */}
+            {/* 답장 프리뷰 */}
             <ReplyPreview
                 replyTarget={replyTarget}
                 onCancelReply={() => setReplyTarget(null)}
             />
 
+            {/* 입력창 */}
             <ChatInput
                 inputValue={inputValue}
                 setInputValue={setInputValue}

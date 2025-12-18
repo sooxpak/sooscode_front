@@ -8,7 +8,7 @@ export default function ReplyPreview({ replyTarget, onCancelReply }) {
         <div className="reply-preview--above">
             <div className="reply-preview__bar" />
             <div className="reply-preview__body">
-                <div className="reply-preview__name">{replyTarget.name}에게 답장</div>
+                <div className="reply-preview__name">{replyTarget.username}에게 답장</div>
                 <div className="reply-preview__content">{replyTarget.content}</div>
             </div>
             <button

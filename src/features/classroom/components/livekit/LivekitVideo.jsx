@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./LivekitVideo.module.css";
-import { useClassroom } from "@/features/classroom/contexts/ClassroomContext.jsx";
+import { useClassroomContext } from "@/features/classroom/contexts/ClassroomContext.jsx";
 import { livekitService } from "@/features/classroom/services/livekitService";
 import { LiveKitRoom } from "@livekit/components-react";
 import "@livekit/components-styles";
@@ -8,7 +8,7 @@ import { useUser } from "../../../../hooks/useUser";
 import ClassroomStage from "./ClassroomStage";
 
 export default function LivekitVideo() {
-  const { classId } = useClassroom();
+  const { classId } = useClassroomContext();
   const [token, setToken] = useState(null);
   const serverUrl = "wss://sooscode-7wzcousb.livekit.cloud";
   const { user } = useUser();
