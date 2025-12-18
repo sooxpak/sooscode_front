@@ -17,7 +17,7 @@ import SnapshotDeleteModal from "./SnapshotDeleteModal";
  * - 스냅샷 목록 상태는 전용 훅(useSnapshotList)에 위임,
  * - 화면 구성 및 사용자 인터랙션 제어만 담당
  */
-const SnapshotPanel = () => {
+const SnapshotPanel = ({onRestore}) => {
     const { classId } = useClassroomContext();
     const toast = useToast();
     /**
@@ -38,7 +38,7 @@ const SnapshotPanel = () => {
         handleRestoreSnapshot,
         resetFilters,
         handleDeleteSnapshot
-    } = useSnapshotList();
+    } = useSnapshotList(onRestore);
     /**
      * 복원 대상 스냅샷
      */

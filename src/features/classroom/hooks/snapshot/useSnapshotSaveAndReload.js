@@ -4,9 +4,9 @@ import { useSnapshotList } from "@/features/classroom/hooks/snapshot/useSnapshot
 /**
  * 스냅샷 저장 후 목록 갱신 훅
  */
-export const useSnapshotSaveAndReload = () => {
+export const useSnapshotSaveAndReload = (code) => {
     // 순수 저장 훅 사용
-    const { loadingSave, handleSaveSnapshot } = useSnapshotSave();
+    const { loadingSave, handleSaveSnapshot } = useSnapshotSave(code);
     //  목록 갱신 리스트 훅 호출
     const { fetchRecentSnapshots } = useSnapshotList();
     //  기능을 하나로 합친 함수
