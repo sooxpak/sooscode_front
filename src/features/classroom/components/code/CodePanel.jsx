@@ -27,7 +27,7 @@ const DEFAULT_CODE =
  * - 학생: useStudentCodeSender로 코드 전송 + 강사 수정 수신
  * - 새로고침 시 Redis에서 코드 복원
  */
-const CodePanel = () => {
+const CodePanel = ({ code: externalCode, onCodeChange }) => {
     const { classId, userId, isInstructor } = useClassroomContext();
     const { isConnected, classMode } = useSocketContext();
 
@@ -40,7 +40,7 @@ const CodePanel = () => {
     const [isInitialized, setIsInitialized] = useState(false);
 
     // 코드 실행 훅 (기존 유지)
-    const { output, run, copy, hasResult, isRunning } = useCodeExecution(code);
+    const { output, run, copy, hasResult } = useCodeExecution(code);
 
     // 강사용 코드 전송 훅
     const {
@@ -53,9 +53,10 @@ const CodePanel = () => {
         onInitialCodeLoaded: useCallback((loadedCode, loadedLanguage) => {
             console.log('[CodePanel - 강사] 초기 코드 로드:', { loadedCode, loadedLanguage });
             setCode(loadedCode);
+            onCodeChange?.(loadedCode);
             setLanguage(loadedLanguage);
             setIsInitialized(true);
-        }, []),
+        }, [onCodeChange]),
     });
 
     // 학생용 코드 전송 훅
@@ -70,14 +71,16 @@ const CodePanel = () => {
         onCodeEdited: useCallback((editedCode, editedLanguage) => {
             console.log('[CodePanel - 학생] 강사가 코드 수정:', { editedCode, editedLanguage });
             setCode(editedCode);
+            onCodeChange?.(editedCode);
             setLanguage(editedLanguage);
-        }, []),
+        }, [onCodeChange]),
         onInitialCodeLoaded: useCallback((loadedCode, loadedLanguage) => {
             console.log('[CodePanel - 학생] 초기 코드 로드:', { loadedCode, loadedLanguage });
             setCode(loadedCode);
+            onCodeChange?.(loadedCode);
             setLanguage(loadedLanguage);
             setIsInitialized(true);
-        }, []),
+        }, [onCodeChange]),
     });
 
     const isLoading = isInstructor ? isInstructorLoading : isStudentLoading;
@@ -94,11 +97,18 @@ const CodePanel = () => {
         });
     }, [isReadOnly, editorInstance]);
 
+    useEffect(() => {
+        if (externalCode !== undefined && externalCode !== code) {
+            setCode(externalCode);
+        }
+    }, [externalCode, code]);
+
     // 코드 변경 핸들러
     const handleCodeChange = (newCode) => {
         if (isReadOnly) return;
 
         setCode(newCode);
+        onCodeChange?.(newCode);
 
         // 역할에 따라 다른 전송 함수 사용
         if (isInstructor) {

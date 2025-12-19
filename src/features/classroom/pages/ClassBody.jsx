@@ -21,6 +21,10 @@ const ClassBody = () => {
     const { collapsed } = useSidebar();
     const { isInstructor } = useClassroomContext();
     const [activeTab, setActiveTab] = useState('code');
+    const [currentCode, setCurrentCode] = useState('');
+    const handleRestore = (code) => {
+        setCurrentCode(code);
+    };
 
     // 우측 패널 라벨
     const getRightPanelLabel = () => {
@@ -53,11 +57,12 @@ const ClassBody = () => {
                                         <TopButtonBar />
                                     ) : (
                                         <div className={styles.snapButtoncontainer}>
-                                            <SnapshotSaveFeature />
+                                            <SnapshotSaveFeature code={currentCode}/>
                                         </div>
                                     )}
                                 </div>
-                                <CodePanel />
+                                <CodePanel code={currentCode}
+                                           onCodeChange={setCurrentCode}/>
                             </div>
                         </Panel>
 
@@ -93,7 +98,7 @@ const ClassBody = () => {
                                     className={styles.panel}
                                     style={{ display: activeTab === 'snapshot' ? 'block' : 'none' }}
                                 >
-                                    <SnapshotPanel />
+                                    <SnapshotPanel onRestore={handleRestore}/>
                                 </div>
                             </div>
                         </Panel>
