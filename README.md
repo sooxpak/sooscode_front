@@ -1,6 +1,6 @@
 # 서비스 소개
 
-![logo.png](attachment:810ac99b-d97c-4032-8b21-502b904b61e8:logo.png)
+<img width="1356" height="280" alt="logo" src="https://github.com/user-attachments/assets/0629f957-2b54-4b8f-90cf-6ce64b616782" />
 
 > 실시간 화상 강의, 코드 공유, 안전한 실행 환경을 하나로 통합한 실습 중심 온라인 코딩 교육 플랫폼
 > 
@@ -26,7 +26,7 @@
 
 ## 핵심 기능
 
-![image.png](attachment:1bdac93a-c3a3-4110-9057-9fd7aeae693c:image.png)
+<img width="1908" height="904" alt="image" src="https://github.com/user-attachments/assets/c14cbbf8-0bfc-4a00-a318-4aa1968e4e4c" />
 
 ### 1. 코드 컴파일 및 실행
 
@@ -96,7 +96,7 @@
 
 ### 1. 비동기 컴파일 처리 구조
 
-![image.png](attachment:d419e924-f1bb-4d9b-954b-33c0cdb2188c:image.png)
+<img width="1165" height="549" alt="image (1)" src="https://github.com/user-attachments/assets/6e2a92da-5d93-4c4f-9ac3-93e10af68c34" />
 
 **장점**
 
@@ -106,7 +106,7 @@
 
 ### 2. 실시간 화상 강의 구조
 
-![image.png](attachment:5af591ac-b50e-4ee3-9247-d7c7e889d210:image.png)
+<img width="667" height="657" alt="image (2)" src="https://github.com/user-attachments/assets/2606b5cc-eefa-4f0a-ac45-ecf66c2c8613" />
 
 **장점**
 
@@ -116,7 +116,7 @@
 
 ### 3. 소프트웨어 아키텍처
 
-![image.png](attachment:85b345e8-9ce0-43b5-a418-0948c0961612:image.png)
+<img width="715" height="571" alt="image (3)" src="https://github.com/user-attachments/assets/39502d6e-9df8-4913-a044-8406a97b0493" />
 
 ---
 
