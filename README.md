@@ -1,219 +1,142 @@
-# 서비스 소개
-
-<img width="1356" height="280" alt="logo" src="https://github.com/user-attachments/assets/0629f957-2b54-4b8f-90cf-6ce64b616782" />
-
-> 실시간 화상 강의, 코드 공유, 안전한 실행 환경을 하나로 통합한 실습 중심 온라인 코딩 교육 플랫폼
-> 
+![실시간코딩2](https://github.com/user-attachments/assets/e00787f6-aa97-43cb-a8b9-07392d41531f)### 프로젝트 간단 설명
 
 ---
 
-## 프로젝트 개요
+- 강사와 학생이 물리적 거리와 관계없이 실시간으로 코드를 공유하고 즉각적인 피드백을 주고받을 수 있는 코딩 교육 플랫폼
 
-### 배경 및 문제 인식
+- 로그인·회원가입
+    
+    <aside>
+    1. 구글 소셜 로그인 연동
+    2. 이메일 인증 기반 회원가입
+    3. 비밀번호 강도 검증
+    </aside>
+    
+    <img width="778" height="1050" alt="screencapture-localhost-5173-login-2025-12-25-16_49_40" src="https://github.com/user-attachments/assets/69c7af5c-ba32-44c8-8aa5-4bf33e13604f" />
+    <img width="722" height="1235" alt="screencapture-localhost-5173-register-2025-12-25-16_49_28" src="https://github.com/user-attachments/assets/d825b1f7-07f0-4478-ae31-85c8829668dd" />
+    <img width="484" height="514" alt="스크린샷 2025-12-26 오전 10 42 28" src="https://github.com/user-attachments/assets/2e7a4bb0-0a6b-4f92-a15d-a5cf11208f87" />
 
-온라인 코딩 교육 환경에서 발생하는 주요 문제점:
+    
+- 메인
+  
+    <img width="1980" height="3975" alt="screencapture-localhost-5173-2025-12-25-15_47_04" src="https://github.com/user-attachments/assets/5536b8f8-315f-4024-b318-bdb07439da34" />
 
-- **환경 설정의 복잡함**: 학생마다 다른 OS, 개발 환경으로 인한 초기 진입 장벽
-- **실시간 피드백의 한계**: 화면 공유 방식의 일방향 소통
-- **서버 안정성 문제**: 다수 사용자의 동시 코드 실행으로 인한 서버 과부하
-- **보안 위험**: 악성 코드 실행(RCE)에 대한 근본적인 대책 부재
+- 마이페이지
+    
+    <aside>
+    1. 라이트/다크모드를 지원 (기본값: 브라우저 설정 자동 적용)
+    2. 강의실 정보 조회
+    </aside>
+    
+    # 마이페이지 홈
 
-### 솔루션
+    <img width="2560" height="1294" alt="screencapture-localhost-5173-mypage-2025-12-25-15_50_05" src="https://github.com/user-attachments/assets/69a6730c-0b35-441c-a161-9af3f10449e6" />
+    <img width="2560" height="1294" alt="screencapture-localhost-5173-mypage-2025-12-25-15_50_13" src="https://github.com/user-attachments/assets/2a08602a-8e01-48ba-9d80-a74d20ff91d0" />
 
-비동기 컴파일 처리, Docker 격리 실행, WebRTC 기반 실시간 강의를 핵심 기술로 채택하여 안정적이고 안전한 통합 코딩 교육 플랫폼 구현
+    
+    # 코드 연습 페이지
+  
+    <aside>
+    1. 지원 언어: Java, Python, HTML/CSS/JavaScript
+    2. 스냅샷, 스니펫, 코딩 테스트 기능 제공
+    </aside>
+    
+    ![마이페이지-코딩연습](https://github.com/user-attachments/assets/a80a5921-c919-4e09-8dc9-b2b97cc42787)
 
----
+    
 
-## 핵심 기능
+    
+    
+- 실시간 코드 에디터
+    
+    <aside>
+    1. 강사-학생 간 양방향 코드 실시간 동기화 (강사는 학생 코드, 학생은 강사 코드를 우측 패널에서 확인)
+    2. 수업 모드 제어: 강사가 읽기 모드/자유 모드 전환 가능 (읽기 모드 시 학생 패널 편집 제한)
+    3. 스냅샷을 통한 코드 저장 기능
+    4. 코드 자동 저장
+    5. 강사의 특정 학생 코드 조회 기능
+    </aside>
+    
+    # 강사 브라우저
+  
+    ![실시간코딩2](https://github.com/user-attachments/assets/6bd75ad5-a44c-4aef-b068-8ad6f4e2c763)
 
-<img width="1908" height="904" alt="image" src="https://github.com/user-attachments/assets/c14cbbf8-0bfc-4a00-a318-4aa1968e4e4c" />
+   
+    
+    # 학생 브라우저
+  
+   ![실시간코딩3](https://github.com/user-attachments/assets/bda41919-9179-427e-8a32-11646364c9f1)
 
-### 1. 코드 컴파일 및 실행
+    
+    
+    # 코드 실행과 스냅샷 저장
+    
+    <aside>
+    1. 컴파일 서버 연동: 코드 전송 → 실행 → 결과 반환
+    2. 보안 및 제한 사항: Main 클래스 누락 감지, 용량 초과 방지, 블랙리스트 코드 차단, 과도한 실행 요청 차단
+    </aside>
+    
+    ![실시간코딩1](https://github.com/user-attachments/assets/b34c671c-2be1-4f2c-bfbb-f20cdf32a88e)
 
-- 브라우저 기반 코드 에디터 제공
-- Docker 컨테이너 기반 격리 실행 환경
-- Redis Queue를 활용한 비동기 처리 구조
-- 실시간 실행 결과 반환
 
-### 2. 실시간 화상 강의
+    
+- 채팅
+    
+    <aside>
+    1. 상대방 입력 상태 실시간 표시
+    2. 메시지 좋아요 및 답글 기능
+    </aside>
+    
+    ![채팅](https://github.com/user-attachments/assets/2cfa7ae9-af0f-448a-a31d-60a3e761166d)
 
-- WebRTC 기반 양방향 화상 통신
-- LiveKit(SFU) 서버를 통한 미디어 스트리밍
-- API 서버와 미디어 서버 분리로 네트워크 병목 제거
-- 안정적인 HD 화질 강의 환경
+    
+    
+- 관리자
+    
+    <aside>
+    1. ADMIN 권한 계정의 사용자 및 클래스 관리
+    2. 엑셀을 통한 사용자/클래스 정보 다운로드 및 일괄 등록 
+    </aside>
+    ![2025-12-25_gongkebi](https://github.com/user-attachments/assets/4b1f3dd5-6479-465a-b387-937371cf5d53)
 
-### 3. 실시간 코드 공유
+    <img width="414" height="484" alt="스크린샷 2025-12-24 오후 2 45 18" src="https://github.com/user-attachments/assets/c08a48d6-4c1e-405b-a03a-9edb5c4dc365" />
+    <img width="347" height="485" alt="스크린샷 2025-12-24 오후 2 45 13" src="https://github.com/user-attachments/assets/9c6617fd-7cff-4e1b-9191-8e90cb3b4ae5" />
 
-- WebSocket(STOMP) 기반 코드 동기화
-- 학생 코드 변경 사항 실시간 브로드캐스팅
-- 강사의 즉각적인 코드 리뷰 가능
-- 자동 저장 구조로 데이터 유실 방지
+    
 
-### 4. 마이페이지
-
-- 사용자 프로필 관리
-- 수강/개설 강의 대시보드
-- 학습 기록 조회
-- 프로필 이미지 S3 저장
-
-### 5. 관리자 시스템
-
-- RBAC(Role-Based Access Control) 기반 접근 제어
-- 사용자/강의 대량 등록 (트랜잭션 처리)
-- 시스템 상태 모니터링
-- 활동 지표 대시보드
-
----
-
-## 시스템 아키텍처
-
-### 설계 목표
-
-1. **작업 분리**: 고부하 작업(컴파일)과 일반 웹 요청의 명확한 분리
-2. **안정성**: 동시 접속 환경에서도 서비스 중단 없는 안정적 운영
-3. **보안**: 사용자 코드 실행에 대한 다층 보안 체계
-4. **성능**: 실시간 서비스의 네트워크 병목 최소화
-
-### 인프라 구성
-
-**AWS Cloud 기반 VPC 환경**
-
-- **Public Subnet**: API Server, Media Server (LiveKit)
-- **Private Subnet**: RDS (MariaDB), Compile Worker
-- **Docker 기반** 다중 컨테이너 운영
-
-### 서버 역할 분리
-
-| 서버 | 역할 | 주요 기술 |
-| --- | --- | --- |
-| **API Server** | - 인증 및 권한 관리- 강의/마이페이지/관리자 API- 컴파일 요청 중개 | Spring Boot, Redis Session |
-| **Compile Server** | - 코드 컴파일 및 실행 전담- Docker 컨테이너 내 격리 실행- Redis Queue 기반 작업 처리 | Python, Docker SDK, Redis |
-| **Media Server** | - WebRTC 미디어 스트리밍- SFU 기반 실시간 통신 | LiveKit |
-
----
-
-## ⚙️ 핵심 기술 아키텍처
-
-### 1. 비동기 컴파일 처리 구조
-
-<img width="1165" height="549" alt="image (1)" src="https://github.com/user-attachments/assets/6e2a92da-5d93-4c4f-9ac3-93e10af68c34" />
-
-**장점**
-
-- 동시 요청 폭주 시에도 서버 다운 방지
-- 작업 대기열 관리로 순차적 안정 처리
-- API 서버와 컴파일 서버의 완전한 분리
-
-### 2. 실시간 화상 강의 구조
-
-<img width="667" height="657" alt="image (2)" src="https://github.com/user-attachments/assets/2606b5cc-eefa-4f0a-ac45-ecf66c2c8613" />
-
-**장점**
-
-- 미디어 트래픽을 API 서버에서 완전히 분리
-- 네트워크 병목 및 성능 저하 방지
-- SFU 방식으로 효율적인 다자간 통신
-
-### 3. 소프트웨어 아키텍처
-
-<img width="715" height="571" alt="image (3)" src="https://github.com/user-attachments/assets/39502d6e-9df8-4913-a044-8406a97b0493" />
+### 주 시도들
 
 ---
 
-## 보안 아키텍처
+1. Spring Security와 JWT를 결합한 토큰 기반 인증 체계 구축 및 Redis 캐싱 전략 수립
+2. 강사-학생 간 실시간 코드 동기화 데이터 흐름 및 상태 관리 구조 설계
 
-### 1. Docker 격리 실행
-
-- 사용자 코드는 독립된 Docker 컨테이너 내부에서만 실행
-- 호스트 OS 및 타 서비스 완전 격리
-- 컨테이너 종료 후 즉시 제거
-
-### 2. 코드 블랙리스트 필터링
-
-- Reflection, 시스템 명령 실행, 파일 접근 코드 차단
-- 실행 전 정적 분석으로 위험 코드 사전 차단
-- 주요 차단 대상: `Runtime.getRuntime()`, `ProcessBuilder`, `File` 클래스 등
-
-### 3. 리소스 제한
-
-- **실행 시간 제한**: 무한 루프 방지
-- **메모리 제한**: 과도한 메모리 사용 차단
-- **CPU 제한**: CPU 점유율 제어
+### 예산 및 리소스
 
 ---
 
-## 데이터 관리
+- 개발 기간: 총 20일 (기획 3일, 설계 3일, 개발 12일, 테스트 2일)
+- **팀 구성:** 4인 풀스택 협업
+- **환경:**
+    - Front-end: React, HTML, CSS, JavaScript, MonacoEditor
+    - Back-end: Java(JDK17), Spring Boot, Spring Data JPA, Spring Security(JWT), WebSocket, STOMP
+    - DB & Infra: MariaDB, Redis, Docker, Nginx, AWS(EC2, RDS, S3), Livekit Cloud, Apache Tomcat
 
-### Database (AWS RDS - MariaDB)
-
-- 사용자, 강의, 수강 정보 저장
-- Private Subnet 배치로 보안 강화
-- 트랜잭션 기반 데이터 일관성 보장
-
-### AWS S3
-
-- 프로필 이미지 저장
-- 소스 코드 파일 업로드/다운로드
-- 비정형 데이터 영구 보관
-
-### Redis
-
-- 세션 관리 (Session Store)
-- 컴파일 작업 큐 (Message Queue)
-- 캐싱 레이어
+### 관련 맴버
 
 ---
 
-## 주요 데이터 흐름
+- 박수빈: 로그인·회원가입 인증(JWT), 실시간 코드 공유 에디터(WebSocket)
+- 정**: 실시간 코드 공유 에디터, 관리자 페이지
+- 양**: 컴파일 서버 구축, 코드 스냅샷
+- 김**: 영상·음성 스트리밍, 마이페이지
+- 최**: 코드 스냅샷, 실시간 채팅
 
-### 일반 요청
-
-`Client → API Server → DB / Redis(Session) → Response`
-
-### 코드 실행
-
-`Client → API Server → Redis Queue → Compile Worker 
-→ Docker 실행 → 결과 반환 → Client`
-
-### 화상 강의
-
-`Client ↔ LiveKit Server (미디어 스트리밍)
-Client → API Server (인증/토큰 발급)`
+### 성과
 
 ---
 
-## 버전 히스토리
-
-| Version | 주요 변경 사항 | Date |
-| --- | --- | --- |
-| 0.1.0 | 아키텍처 초기 설계 | 2025-11-30 |
-| 0.5.0 | Compile Server 분리, Docker 구조 설계 | 2025-12-03 |
-| 0.8.0 | AWS 인프라 확정, Redis 분리, LiveKit 연동 | 2025-12-09 |
-| 0.9.0 | 보안 아키텍처 고도화, 예외 처리 통일 | 2025-12-12 |
-| 1.0.0 | 최종 아키텍처 확정 | 2025-12-16 |
-
----
-
-## 기술 스택
-
-### Backend
-
-- Spring Boot
-- Spring Security (JWT)
-- WebSocket (STOMP)
-- JPA
-- MariaDB
-
-### Frontend
-
-- React
-- React Router
-- STOMP.js (WebSocket)
-- Axios
-- Tailwind CSS?/SCSS?/CSS?
-
-### 배포
-
-- Backend: AWS EC2
-- Frontend: Vercel
-- DB: AWS RDS
+1. Spring Security(JWT) 기반 인증 시스템 구축으로 강사/학생 권한별 접근 제어 구현
+2. Redis를 활용한 JWT 토큰 관리로 로그인 세션 관리 최적화
+3. WebSocket/STOMP 기반 실시간 코드 동기화로 평균 200ms 이내 응답 성능 달성
+4. Spring Boot 기반 RESTful API 총 17개 엔드포인트 설계 및 구현
